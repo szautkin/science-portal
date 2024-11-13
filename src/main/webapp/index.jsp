@@ -39,6 +39,7 @@
     <!-- Include React dependencies first -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+      <link rel="stylesheet" href="${contextPath}/dist/react-app.css?v=${buildVersion}">
 
     <!--[if lt IE 9]>
 <!--        <script src="/html5shiv.googlecode.com/svn/trunk/html5.js"></script>-->

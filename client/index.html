@@ -2,12 +2,27 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React + TS</title>
+    <title>Science Portal</title>
   </head>
-  <body>
-    <div id="science-portal-root"></div>
+  <body class="theme-<%= configuration.getThemeName() %>">
+  <div class="container-fluid fill">
+    <div class="row fill">
+      <div role="main" class="col-sm-12 col-md-12 main fill">
+        <div class="inner fill">
+          <section id="main_content" class="fill">
+            <div class="science-portal-authenticated">
+              <div id="sp_listnavbar" class="panel panel-default sp-panel">
+                <div id="science-portal-root"></div>
+                <!-- Content ends -->
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

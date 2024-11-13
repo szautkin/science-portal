@@ -1,7 +1,12 @@
+import { StrictMode } from 'react';
+import './index.css';
+import { AuthProvider } from './context/auth/AuthProvider';
+import { AppProvider } from './context/app/AppProvider';
+import { DataProvider } from './context/data/DataProvider';
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
-import './index.css'
+
 
 interface LaunchData {
     baseURL: string;
@@ -14,6 +19,7 @@ interface LaunchData {
     headerURLs: Record<string, string>;
 }
 
+
 export interface AppProps {
     initialData: LaunchData;
     config: {
@@ -21,7 +27,19 @@ export interface AppProps {
     };
 }
 
-function mount(element: HTMLElement, props: AppProps) {
+const getAppTree = (props: AppProps) => (
+    <StrictMode>
+        <AppProvider>
+            <AuthProvider>
+                <DataProvider>
+                    <App {...props} />
+                </DataProvider>
+            </AuthProvider>
+        </AppProvider>
+    </StrictMode>
+)
+
+const mount = (element: HTMLElement, props: AppProps) => {
     if (!element) {
         console.error('Mount element not found');
         return;
@@ -30,9 +48,7 @@ function mount(element: HTMLElement, props: AppProps) {
     try {
         const root = ReactDOM.createRoot(element);
         root.render(
-            <React.StrictMode>
-                <App {...props} />
-            </React.StrictMode>
+            getAppTree(props)
         );
     } catch (error) {
         console.error('Error mounting app:', error);
@@ -57,8 +73,9 @@ try {
     console.error('Error initializing SciencePortal:', error);
 }
 
-// Development mode check without using process.env
-if (import.meta.env.DEV) {
+const isDev = import.meta.env.DEV
+
+if (isDev) {
     const element = document.getElementById('science-portal-root');
     if (element) {
         mount(element, {

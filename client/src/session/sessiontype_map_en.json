@@ -1,0 +1,23 @@
+{
+  "session_types": {
+    "notebook": {
+      "form_fields": ["name", "type", "image", "memory", "cores"],
+      "portal_icon": "jupyterLogo.jpg",
+      "portal_text": "JupyterLab"
+    },
+    "desktop": {
+      "form_fields": ["name", "type", "image"],
+      "portal_icon": "fas_desktop.png ",
+      "portal_text": "desktop"
+    },
+    "carta": {
+      "form_fields": ["name", "type", "image", "memory", "cores"],
+      "portal_icon": "cartaLogo.png"
+    },
+    "contributed": {
+      "form_fields": ["name", "type", "image", "memory", "cores"],
+      "portal_icon": "fas_cube.png",
+      "portal_text": "contributed"
+    }
+  }
+}
