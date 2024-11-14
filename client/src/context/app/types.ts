@@ -134,12 +134,12 @@ export type AppAction =
 
 export interface AppFetch {
   [APP_FETCH_URL]: string;
-  [APP_FETCH_OPTIONS]: RequestInit;
+  [APP_FETCH_OPTIONS]?: RequestInit;
   [APP_PART_TYPE]: UiLoading;
 }
 
 export interface FetchResult {
   [APP_FETCH_RESULT]: {
-    data: { [key: string]: never };
+    [key: string]: never;
   };
 }

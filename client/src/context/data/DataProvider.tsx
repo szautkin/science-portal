@@ -67,7 +67,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
         },
         [APP_PART_TYPE]: SESSION_STATS,
       });
-      const rawStatsData = responseData[APP_FETCH_RESULT].data as unknown;
+      const rawStatsData = responseData?.[APP_FETCH_RESULT].data as unknown;
       const reprocessedStatsData = processPlatformUsage(
         rawStatsData as StatsData,
       );
@@ -87,7 +87,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
         },
         [APP_PART_TYPE]: RUNNING_SESSIONS,
       });
-      const rawSessions = sessionsData[APP_FETCH_RESULT].data as unknown;
+      const rawSessions = sessionsData?.[APP_FETCH_RESULT]?.data as unknown;
       const reprocessedSessions = getTransformedSessions(
         rawSessions as Session[],
       );
@@ -151,7 +151,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
           },
           [APP_PART_TYPE]: FETCHING_SESSION,
         });
-        const rawSession = sessionData[APP_FETCH_RESULT].data as unknown;
+        const rawSession = sessionData?.[APP_FETCH_RESULT]?.data as unknown;
         const reprocessedSession = transformSession(rawSession as Session);
         dispatch({
           type: SET_SESSION,
@@ -174,7 +174,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
         },
         [APP_PART_TYPE]: PLATFORM_CONTEXT,
       });
-      const rawContext = contextData[APP_FETCH_RESULT].data as unknown;
+      const rawContext = contextData?.[APP_FETCH_RESULT]?.data as unknown;
       dispatch({
         type: SET_CONTEXT,
         payload: rawContext as Context,
@@ -194,7 +194,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
         },
         [APP_PART_TYPE]: AVAILABLE_IMAGES,
       });
-      const rawImages = imagesData[APP_FETCH_RESULT].data as unknown;
+      const rawImages = imagesData?.[APP_FETCH_RESULT]?.data as unknown;
       const imagesByType = getImagesByType(rawImages as Image[]);
 
       dispatch({

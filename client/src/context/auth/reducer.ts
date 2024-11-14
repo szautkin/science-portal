@@ -23,6 +23,7 @@ export const authReducer = (
         [USER]: {
           [USER_NAME]: action.payload[USER_NAME],
         },
+        [IS_AUTHENTICATED]: true,
       };
     case LOGOUT:
       return {

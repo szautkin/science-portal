@@ -63,13 +63,11 @@ import { AppProps } from './main';
 import { AppTheme } from './context/app/types';
 import SRCNavbar from './components/src/SRCNavbar';
 import SRCLoginModal from './components/src/SRCLoginModal';
-import useCheckAuth from './context/auth/checkAuth';
 
 const App = (props: AppProps) => {
-  console.log(' App props', props);
-  useCheckAuth();
   const { state: authState, getUser } = useAuth();
   const { state: appState, setConfig } = useApp();
+
   const {
     state: dataState,
     fetchStatsData,
@@ -93,9 +91,9 @@ const App = (props: AppProps) => {
 
   React.useEffect(() => {
     if (
-      authState?.[IS_AUTHENTICATED] &&
-      !authState[USER][USER_NAME] &&
-      !appState[APP_LOADING][RETRIEVING_USER]
+      !authState?.[IS_AUTHENTICATED] &&
+      !authState?.[USER]?.[USER_NAME] &&
+      !appState?.[APP_LOADING]?.[RETRIEVING_USER]
     ) {
       getUser();
     }
@@ -117,6 +115,8 @@ const App = (props: AppProps) => {
     fetchRunningSessions();
   };
   console.log('appState', appState);
+  console.log('authState', authState);
+  console.log('dataState', dataState);
   /*  let isAuthenticated = true
   if (typeof this.state.userInfo.isAuth !== "undefined") {
     isAuthenticated = this.state.userInfo.isAuth

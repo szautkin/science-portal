@@ -15,7 +15,7 @@ export const AppContext = createContext<
         sessionName: string;
       }) => void;
       clearDeleteSessionInfo: () => void;
-      appFetch: (args: AppFetch) => Promise<FetchResult>;
+      appFetch: (args: AppFetch) => Promise<FetchResult | undefined>;
       setConfig: (config: AppConfig) => void;
     }
   | undefined

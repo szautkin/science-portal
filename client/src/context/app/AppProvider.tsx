@@ -14,7 +14,8 @@ import {
   FETCH_FAILED,
   SET_LOADING,
   SET_DELETE_SESSION_INFO,
-  CLEAR_DELETE_SESSION_INFO, SET_APP_CONFIG,
+  CLEAR_DELETE_SESSION_INFO,
+  SET_APP_CONFIG,
 } from './constants';
 
 // Reducer
@@ -31,7 +32,6 @@ import { fetchWithAuth } from './authFetch';
 
 // Context
 import { AppContext } from './appContext';
-import { config } from '../../config';
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -63,56 +63,80 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     });
   }, [dispatch]);
 
-  const fetchFn = useCallback(
-    (dispatch: Dispatch<AppAction>) => async (payload: AppFetch) => {
-      dispatch({
-        type: SET_LOADING,
-        payload: {
-          [APP_IS_LOADING]: true,
-          [APP_ACTION_TYPE]: payload[APP_PART_TYPE],
-        },
-      });
-      try {
-        const response = await fetchWithAuth(
-          payload[APP_FETCH_URL],
-          payload[APP_FETCH_OPTIONS],
-        );
-        const data = await response.json();
-        return {
-          [APP_FETCH_RESULT]: data,
-        };
-      } catch (e: unknown) {
-        console.error('Fetch failed:', e);
+  const appFetch = useCallback(async (payload: AppFetch) => {
+    dispatch({
+      type: SET_LOADING,
+      payload: {
+        [APP_IS_LOADING]: true,
+        [APP_ACTION_TYPE]: payload[APP_PART_TYPE],
+      },
+    });
+    try {
+      const response = await fetchWithAuth(
+        payload[APP_FETCH_URL],
+        payload[APP_FETCH_OPTIONS],
+      );
+      if (response.ok && response.status >= 200 && response.status < 400) {
+        try {
+          const data = await response.json();
+          return {
+            [APP_FETCH_RESULT]: data,
+          };
+        } catch {
+          dispatch({
+            type: FETCH_FAILED,
+            payload: {
+              [APP_ACTION_TYPE]: payload[APP_PART_TYPE],
+              [APP_ACTION_MESSAGE]: `JSON parse error`,
+            },
+          });
+        }
+      } else {
         dispatch({
           type: FETCH_FAILED,
           payload: {
             [APP_ACTION_TYPE]: payload[APP_PART_TYPE],
-            [APP_ACTION_MESSAGE]: (e as Error).message,
+            [APP_ACTION_MESSAGE]: `Network Error: ${response.status} - ${response.statusText}`,
           },
         });
-        throw e;
-      } finally {
-        dispatch({
-          type: SET_LOADING,
-          payload: {
-            [APP_IS_LOADING]: false,
-            [APP_ACTION_TYPE]: payload[APP_PART_TYPE],
+
+        return {
+          [APP_FETCH_RESULT]: {
+            data: undefined,
           },
-        });
+        };
       }
+    } catch (e: unknown) {
+      console.error('Fetch failed:', (e as Error).message);
+      dispatch({
+        type: FETCH_FAILED,
+        payload: {
+          [APP_ACTION_TYPE]: payload[APP_PART_TYPE],
+          [APP_ACTION_MESSAGE]: (e as Error).message,
+        },
+      });
+      throw e;
+    } finally {
+      dispatch({
+        type: SET_LOADING,
+        payload: {
+          [APP_IS_LOADING]: false,
+          [APP_ACTION_TYPE]: payload[APP_PART_TYPE],
+        },
+      });
+    }
+  }, []);
+
+  const setAppConfig = useCallback(
+    (dispatch: Dispatch<AppAction>) => (config: AppConfig) => {
+      dispatch({
+        type: SET_APP_CONFIG,
+        payload: config,
+      });
     },
     [],
   );
 
-  const setAppConfig = useCallback(
-    (dispatch: Dispatch<AppAction>) => (config: AppConfig) => {
-  dispatch({
-    type: SET_APP_CONFIG,
-    payload: config
-  })
-    }, [])
-
-  const appFetch = fetchFn(dispatch);
   const setConfig = setAppConfig(dispatch);
   return (
     <AppContext.Provider

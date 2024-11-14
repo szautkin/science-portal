@@ -38,10 +38,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           },
           [APP_PART_TYPE]: AUTHENTICATING,
         });
-        dispatch({
-          type: SET_COOKIE,
-          payload: responseData[APP_FETCH_RESULT].data.cookie,
-        });
+        if (responseData) {
+          dispatch({
+            type: SET_COOKIE,
+            payload: responseData?.[APP_FETCH_RESULT]?.cookie,
+          });
+        }
       } catch (e) {
         throw e;
       }
@@ -68,18 +70,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       const responseData = await appFetch({
         [APP_FETCH_URL]: `${BASE_URL}${USERINFO_URL}`,
-        [APP_FETCH_OPTIONS]: {
-          method: 'POST',
-          body: JSON.stringify({ cookie: state.cookie }),
-        },
         [APP_PART_TYPE]: RETRIEVING_USER,
       });
-      dispatch({
-        type: LOGIN,
-        payload: {
-          userName: responseData[APP_FETCH_RESULT].data.name as string,
-        },
-      });
+      console.log('do we have a response?', responseData);
+      if (responseData?.[APP_FETCH_RESULT]?.name) {
+        dispatch({
+          type: LOGIN,
+          payload: {
+            userName: responseData?.[APP_FETCH_RESULT]?.name as string,
+          },
+        });
+      }
     } catch (error) {
       console.error('Fetching user info failed:', error);
     }
