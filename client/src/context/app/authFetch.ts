@@ -8,6 +8,7 @@ export const fetchWithAuth = async (
       ...options.headers,
       'Content-Type': 'application/json',
     },
+    credentials: 'include',
   });
 
   if (!response.ok) {

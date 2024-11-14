@@ -1,6 +1,8 @@
 // Constants
 import {
   APP_ACTION_MESSAGE,
+  APP_BANNER,
+  APP_CONFIG,
   APP_DELETE_SESSION_INFO,
   APP_LOADING,
   APP_SERVICE_STATUSES,
@@ -8,8 +10,10 @@ import {
   APP_SESSION_NAME,
   APP_SHOW_MODAL,
   APP_STATUS,
+  APP_THEME,
   AUTHENTICATING,
   AVAILABLE_IMAGES,
+  CANFAR,
   CREATE_SESSION,
   DELETE_SESSION,
   FETCHING_SESSION,
@@ -26,6 +30,10 @@ import { AppState } from './types';
 
 // Initial state
 export const initialState: AppState = {
+  [APP_CONFIG]: {
+    [APP_THEME]: CANFAR,
+    [APP_BANNER]: '',
+  },
   [APP_LOADING]: {
     [AUTHENTICATING]: false,
     [SESSION_STATS]: false,

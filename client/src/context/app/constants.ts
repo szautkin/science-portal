@@ -15,6 +15,9 @@ export const APP_FETCH_URL = 'fetchUrl';
 export const APP_FETCH_OPTIONS = 'fetchOptions';
 export const APP_FETCH_RESULT = 'fetchResult';
 export const APP_PART_TYPE = 'appPartType';
+export const APP_CONFIG = 'appConfig';
+export const APP_THEME = 'appTheme';
+export const APP_BANNER = 'appBanner';
 
 // Actions
 const prefix = '@APP';
@@ -22,6 +25,7 @@ export const SET_DELETE_SESSION_INFO = `${prefix}/SET_DELETE_SESSION_INFO`;
 export const CLEAR_DELETE_SESSION_INFO = `${prefix}/CLEAR_DELETE_SESSION_INFO`;
 export const SET_LOADING = `${prefix}/SET_LOADING`;
 export const FETCH_FAILED = `${prefix}/FETCH_FAILED`;
+export const SET_APP_CONFIG = `${prefix}/SET_APP_CONFIG`;
 
 export const BASE_HOST_URL = 'https://www.canfar.net';
 export const CADC_BASE_HOST_URL =
@@ -65,3 +69,6 @@ export const CREATE_SESSION = 'create_session';
 export const OPERATIONAL = 'operational';
 export const OUTAGE = 'outage';
 export const ACTIVE = 'active';
+
+export const CANFAR = 'canfar';
+export const SRC = 'src';

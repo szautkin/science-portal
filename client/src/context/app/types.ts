@@ -30,10 +30,17 @@ import {
   APP_PART_TYPE,
   PLATFORM_CONTEXT,
   RETRIEVING_USER,
+  APP_CONFIG,
+  APP_THEME,
+  CANFAR,
+  SRC,
+  SET_APP_CONFIG,
+  APP_BANNER,
 } from './constants';
 
 // State interface
 export interface AppState {
+  [APP_CONFIG]: AppConfig;
   [APP_LOADING]: {
     [AUTHENTICATING]: boolean;
     [RETRIEVING_USER]: boolean;
@@ -49,6 +56,12 @@ export interface AppState {
   [APP_SERVICE_STATUSES]: ServiceStatus;
   [APP_DELETE_SESSION_INFO]: SessionDeleteInfo;
 }
+
+export interface AppConfig {
+  [APP_THEME]: AppTheme;
+  [APP_BANNER]: string;
+}
+export type AppTheme = typeof CANFAR | typeof SRC;
 
 export interface SessionDeleteInfo {
   [APP_SHOW_MODAL]: boolean;
@@ -109,14 +122,15 @@ export type AppAction =
       payload: { [APP_ACTION_TYPE]: UiLoading; [APP_IS_LOADING]: boolean };
     }
   | {
-      type: typeof FETCH_FAILED;
+      [APP_ACTION_TYPE]: typeof FETCH_FAILED;
       payload: { [APP_ACTION_TYPE]: UiLoading; [APP_ACTION_MESSAGE]: string };
     }
   | {
-      type: typeof SET_DELETE_SESSION_INFO;
+      [APP_ACTION_TYPE]: typeof SET_DELETE_SESSION_INFO;
       payload: Omit<SessionDeleteInfo, 'showModal'>;
     }
-  | { [APP_ACTION_TYPE]: typeof CLEAR_DELETE_SESSION_INFO };
+  | { [APP_ACTION_TYPE]: typeof CLEAR_DELETE_SESSION_INFO }
+  | { [APP_ACTION_TYPE]: typeof SET_APP_CONFIG; payload: AppConfig };
 
 export interface AppFetch {
   [APP_FETCH_URL]: string;

@@ -1,7 +1,7 @@
 import React from 'react';
 import { createContext } from 'react';
 
-import { AppState, AppFetch, FetchResult, AppAction } from './types';
+import { AppState, AppFetch, FetchResult, AppAction, AppConfig } from './types';
 
 export const AppContext = createContext<
   | {
@@ -16,6 +16,7 @@ export const AppContext = createContext<
       }) => void;
       clearDeleteSessionInfo: () => void;
       appFetch: (args: AppFetch) => Promise<FetchResult>;
+      setConfig: (config: AppConfig) => void;
     }
   | undefined
 >(undefined);

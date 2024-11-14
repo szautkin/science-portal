@@ -46,21 +46,30 @@ import { useAuth } from './context/auth/useAuth';
 import { useData } from './context/data/useData';
 import { useApp } from './context/app/useApp';
 import {
+  APP_BANNER,
+  APP_CONFIG,
   APP_LOADING,
   APP_SERVICE_STATUSES,
+  APP_THEME,
   AVAILABLE_IMAGES,
   RETRIEVING_USER,
   RUNNING_SESSIONS,
   SESSION_STATS,
+  SRC,
 } from './context/app/constants';
 import { DATA_SESSIONS } from './context/data/constants';
 import { IS_AUTHENTICATED, USER, USER_NAME } from './context/auth/constants';
-import {AppProps} from "./main";
+import { AppProps } from './main';
+import { AppTheme } from './context/app/types';
+import SRCNavbar from './components/src/SRCNavbar';
+import SRCLoginModal from './components/src/SRCLoginModal';
+import useCheckAuth from './context/auth/checkAuth';
 
 const App = (props: AppProps) => {
-  console.log(' App props', props)
+  console.log(' App props', props);
+  useCheckAuth();
   const { state: authState, getUser } = useAuth();
-  const { state: appState } = useApp();
+  const { state: appState, setConfig } = useApp();
   const {
     state: dataState,
     fetchStatsData,
@@ -68,6 +77,19 @@ const App = (props: AppProps) => {
     fetchPlatformContext,
     fetchPlatformImages,
   } = useData();
+
+  React.useEffect(() => {
+    if (
+      props.initialData &&
+      appState?.[APP_CONFIG]?.[APP_THEME] !== props.initialData?.themeName
+    ) {
+      console.log('config', props);
+      setConfig({
+        [APP_THEME]: props.initialData?.themeName as AppTheme,
+        [APP_BANNER]: props.initialData?.bannerText,
+      });
+    }
+  }, [props.initialData, appState, setConfig]);
 
   React.useEffect(() => {
     if (
@@ -94,7 +116,7 @@ const App = (props: AppProps) => {
   const refreshSessions = () => {
     fetchRunningSessions();
   };
-
+  console.log('appState', appState);
   /*  let isAuthenticated = true
   if (typeof this.state.userInfo.isAuth !== "undefined") {
     isAuthenticated = this.state.userInfo.isAuth
@@ -130,7 +152,11 @@ const App = (props: AppProps) => {
 
   return (
     <Container fluid className="bg-white">
-      <CanfarNavbar />
+      {appState?.[APP_CONFIG]?.[APP_THEME] === SRC ? (
+        <SRCNavbar />
+      ) : (
+        <CanfarNavbar />
+      )}
       <Container fluid className="sp-body">
         <Row>
           <Col>
@@ -315,7 +341,12 @@ const App = (props: AppProps) => {
             </Col>
           </Row>
         </Container>
-        {!authState[IS_AUTHENTICATED] && <CanfarLoginModal />}
+        {!authState[IS_AUTHENTICATED] &&
+          (appState?.[APP_CONFIG]?.[APP_THEME] === SRC ? (
+            <SRCLoginModal />
+          ) : (
+            <CanfarLoginModal />
+          ))}
         {<StatusModal />}
         {<DeleteSessionModal />}
       </Container>

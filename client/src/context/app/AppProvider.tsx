@@ -14,7 +14,7 @@ import {
   FETCH_FAILED,
   SET_LOADING,
   SET_DELETE_SESSION_INFO,
-  CLEAR_DELETE_SESSION_INFO,
+  CLEAR_DELETE_SESSION_INFO, SET_APP_CONFIG,
 } from './constants';
 
 // Reducer
@@ -24,13 +24,14 @@ import { appReducer } from './reducer';
 import { initialState } from './store';
 
 // Types
-import { AppAction, AppFetch } from './types';
+import { AppAction, AppConfig, AppFetch } from './types';
 
 // Utils
 import { fetchWithAuth } from './authFetch';
 
 // Context
 import { AppContext } from './appContext';
+import { config } from '../../config';
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -102,12 +103,23 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     },
     [],
   );
+
+  const setAppConfig = useCallback(
+    (dispatch: Dispatch<AppAction>) => (config: AppConfig) => {
+  dispatch({
+    type: SET_APP_CONFIG,
+    payload: config
+  })
+    }, [])
+
   const appFetch = fetchFn(dispatch);
+  const setConfig = setAppConfig(dispatch);
   return (
     <AppContext.Provider
       value={{
         state,
         dispatch,
+        setConfig,
         appFetch,
         requestDeleteSessionConfirmation,
         clearDeleteSessionInfo,
