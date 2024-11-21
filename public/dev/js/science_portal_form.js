@@ -15,6 +15,8 @@
                 onLoadFormDataError: new jQuery.Event('sciPort:onLoadFormDataError'),
                 onLoadImageDataDone: new jQuery.Event('sciPort:onLoadImageDataDone'),
                 onLoadImageDataError: new jQuery.Event('sciPort:onLoadImageDataError'),
+                onLoadRepositoryHostsDone: new jQuery.Event('sciPort:onLoadRepositoryHostsDone'),
+                onLoadRepositoryHostsError: new jQuery.Event('sciPort:onLoadRepositoryHostsError'),
                 onLoadContextDataDone: new jQuery.Event('sciPort:onLoadContextDataDone'),
                 onLoadContextDataError: new jQuery.Event('sciPort:onLoadContextDataError'),
               }
@@ -36,10 +38,11 @@
     this._imageData = []
     this._contextData = {}
     this._sessionTypeList = null
+    this._repositoryHosts = []
     this._sessionTypeMap = {}
 
     // Used to determine when all the data is collected from the form
-    // 1 - call for context informtaion
+    // 1 - call for context information
     // 2 - n: for calls to get image lists for each type
     this._ajaxCallCount = 0
 
@@ -74,13 +77,16 @@
 
       // Set up counter for ajax calls used to load page data
       // context + image list
-      _selfPortalForm._ajaxCallCount = 2;
+      _selfPortalForm._ajaxCallCount = 3;
 
       // Start loading context data
       _selfPortalForm.getContextData()
 
       // Start loading container image lists
       _selfPortalForm.getFullImageList()
+
+      // Obtain the configured repository hosts
+      _selfPortalForm.getRepositoryHosts()
     }
 
 
@@ -191,28 +197,40 @@
       }
     }
 
-    function getFormDataForType(sessionType, sessionName) {
-      var _formData = {}
-      _formData.contextData = _selfPortalForm._contextData
-      _formData.imageList=  _selfPortalForm.getImageListForType(sessionType)
-      _formData.types = _selfPortalForm._sessionTypeList
-      _formData.selectedType = sessionType
-      _formData.sessionName = sessionName
+    function getRepositoryHosts() {
+      const fullListURL = _selfPortalForm.sessionURLs.repositoryHosts;
+      Promise.resolve(_getAjaxData(fullListURL))
+          .then(function (repositoryHostArray) {
+            _selfPortalForm._repositoryHosts = _selfPortalForm._repositoryHosts.concat(repositoryHostArray)
+            _selfPortalForm._ajaxCallCount--
+            if (_selfPortalForm._ajaxCallCount === 0) {
+              trigger(_selfPortalForm, cadc.web.science.portal.form.events.onLoadFormDataDone)
+            }
+          })
+          .catch(function (message) {
+            trigger(_selfPortalForm, cadc.web.science.portal.form.events.onLoadRepositoryHostsError, message)
+          })
+    }
 
-      var tmpMapEntry = _selfPortalForm.getMapEntry(sessionType)
+    function getFormDataForType(sessionType, sessionName) {
+      const _formData = {
+        contextData: _selfPortalForm._contextData,
+        imageList: _selfPortalForm.getImageListForType(sessionType),
+        repositoryHosts: _selfPortalForm._repositoryHosts,
+        types: _selfPortalForm._sessionTypeList,
+        selectedType: sessionType,
+        sessionName: sessionName
+      }
+
+      const tmpMapEntry = _selfPortalForm.getMapEntry(sessionType)
 
       // Translate list of allowed fields into booleans for variable fields
       // ie: showRAM and showCores
 
-      var showcores = false
-      if (tmpMapEntry.form_fields.includes("cores")) {
-        showcores = true
-      }
-      var showram = false
-      if (tmpMapEntry.form_fields.includes("memory")) {
-        showram = true
-      }
-      _formData.formFields = {"showCores": showcores, "showRAM": showram}
+      const showCores = tmpMapEntry.form_fields.includes("cores")
+      const showRAM = tmpMapEntry.form_fields.includes("memory")
+
+      _formData.formFields = {"showCores": showCores, "showRAM": showRAM}
 
       return _formData
     }
@@ -338,6 +356,7 @@
         getCoresArray: getCoresArray,
         getCoresDefault: getCoresDefault,
         getFullImageList: getFullImageList,
+        getRepositoryHosts: getRepositoryHosts,
         getImageListForType: getImageListForType,
         getSessionTypeDefault: getSessionTypeDefault,
         getSessionTypeList: getSessionTypeList,

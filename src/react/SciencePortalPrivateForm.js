@@ -18,22 +18,26 @@ class SciencePortalPrivateForm extends React.Component {
     super(props)
     this.selectedRAM = ""
     this.selectedCores = ""
-    this.registryUsername = props.authenticatedUsername && props.authenticatedUsername !== "Login" ? props.authenticatedUsername : ""
+    this.repositoryUsername = props.authenticatedUsername && props.authenticatedUsername !== "Login" ? props.authenticatedUsername : ""
     if (typeof props.fData.contextData !== "undefined") {
       this.selectedRAM = props.fData.contextData.defaultRAM
       this.selectedCores = props.fData.contextData.defaultCores
     }
+
+    const repositoryHostArray = props.fData.repositoryHosts
+
     this.state = {
-      fData:props.fData,
+      fData: props.fData,
       selectedRAM: this.selectedRAM,
       selectedCores: this.selectedCores,
-      registryUsername: this.registryUsername
+      repositoryUsername: this.repositoryUsername,
+      repositoryHost: (repositoryHostArray && repositoryHostArray.length > 0) ? repositoryHostArray[0] : ""
     }
     this.handleChange = this.handleChange.bind(this);
     this.resetForm = this.resetForm.bind(this);
     this.handleImageChange = this.handleImageChange.bind(this);
-    this.handleRegistrySecretChange = this.handleRegistrySecretChange.bind(this);
-    this.handleRegistryUsernameChange = this.handleRegistryUsernameChange.bind(this);
+    this.handleRepositorySecretChange = this.handleRepositorySecretChange.bind(this);
+    this.handleRepositoryUsernameChange = this.handleRepositoryUsernameChange.bind(this);
   }
 
   handleChange(event) {
@@ -51,15 +55,15 @@ class SciencePortalPrivateForm extends React.Component {
     })
   }
 
-  handleRegistryUsernameChange(event) {
+  handleRepositoryUsernameChange(event) {
     this.setState({
-      registryUsername: event.target.value
+      repositoryUsername: event.target.value
     })
   }
 
-  handleRegistrySecretChange(event) {
+  handleRepositorySecretChange(event) {
     this.setState({
-      registrySecret: event.target.value
+      repositorySecret: event.target.value
     })
   }
 
@@ -77,11 +81,13 @@ class SciencePortalPrivateForm extends React.Component {
 
   resetForm(event) {
     event.stopPropagation();
+    const formProps = this.props;
 
     this.setState({
       selectedCores : this.state.fData.contextData.defaultCores,
       selectedRAM : this.state.fData.contextData.defaultRAM,
-      registryUsername: props.authenticatedUsername && props.authenticatedUsername !== "Login" ? props.authenticatedUsername : ""
+      repositoryUsername: formProps.authenticatedUsername && formProps.authenticatedUsername !== "Login"
+          ? formProps.authenticatedUsername : ""
     });
     this.state.fData.resetHandler();
   }
@@ -155,6 +161,24 @@ class SciencePortalPrivateForm extends React.Component {
       }
     }
 
+    const repositoryHostComponent = this.state.fData.repositoryHosts.length > 1
+        ? <Form.Select
+            name="repositoryHost"
+            size="sm"
+            className="sp-form-cursor sp-form-input"
+          >
+            {this.state.fData.repositoryHosts?.map(mapObj => (
+                <option className="sp-form" key={mapObj} name={mapObj} value={mapObj}>{mapObj}</option>
+            ))}
+          </Form.Select>
+        : <Form.Control
+            type="text"
+            disabled={true}
+            defaultValue={this.state.repositoryHost}
+            name="repositoryHost"
+            className="sp-form-input"
+        />
+
     return (
       <>
         {Object.keys(this.state.fData).length !== 0 && 
@@ -170,10 +194,13 @@ class SciencePortalPrivateForm extends React.Component {
                     {this.renderPopover("Container Image","The full Docker image URI for the session.")}
                   </Form.Label>
                 </Col>
-                <Col sm={7}>
+                <Col sm={3} className={"pe-1"}>
+                  {repositoryHostComponent}
+                </Col>
+                <Col sm={4} className={"ps-1"}>
                   <Form.Control
                       type="text"
-                      placeholder="images.example.org/images/example:1.0.0"
+                      placeholder="project/example-image:1.0.0"
                       value={this.state.image}
                       onChange={this.handleImageChange}
                       name="image"
@@ -183,34 +210,34 @@ class SciencePortalPrivateForm extends React.Component {
               </Row>
               <Row className="sp-form-row">
                 <Col sm={4}>
-                  <Form.Label className="sp-form-label" column="sm">registry username
-                    {this.renderPopover("Image registry username","The username for authenticated access to the Image Registry.")}
+                  <Form.Label className="sp-form-label" column="sm">repository username
+                    {this.renderPopover("Image repository username","The username for authenticated access to the Image Repository.")}
                   </Form.Label>
                 </Col>
                 <Col sm={7}>
                   <Form.Control
                       type="text"
-                      placeholder="Registry username"
-                      value={this.state.registryUsername}
-                      onChange={this.handleRegistryUsernameChange}
-                      name="registryAuthUsername"
+                      placeholder="Repository username"
+                      value={this.state.repositoryUsername}
+                      onChange={this.handleRepositoryUsernameChange}
+                      name="repositoryAuthUsername"
                       className="sp-form-input"
                   />
                 </Col>
               </Row>
               <Row className="sp-form-row">
                 <Col sm={4}>
-                  <Form.Label className="sp-form-label" column="sm">registry secret
-                    {this.renderPopover("Image registry secret","The secret for authenticated access to the Image Registry.")}
+                  <Form.Label className="sp-form-label" column="sm">repository secret
+                    {this.renderPopover("Image repository secret","The secret for authenticated access to the Image Repository.")}
                   </Form.Label>
                 </Col>
                 <Col sm={7}>
                   <Form.Control
                       type="password"
-                      placeholder="Registry secret"
-                      value={this.state.fData.registrySecret}
-                      onChange={this.handleRegistrySecretChange}
-                      name="registryAuthSecret"
+                      placeholder="Repository secret"
+                      value={this.state.fData.repositorySecret}
+                      onChange={this.handleRepositorySecretChange}
+                      name="repositoryAuthSecret"
                       className="sp-form-input"
                   />
                 </Col>
@@ -224,7 +251,7 @@ class SciencePortalPrivateForm extends React.Component {
               <Row className="sp-form-row">
                 <Col sm={4}>
                   <Form.Label className="sp-form-label" column="sm">type
-                    {this.renderPopover("Session Type", "Select from the list of supported session types")}
+                    {this.renderPopover("Session Type", "Pick from the list of supported session types")}
                   </Form.Label>
                 </Col>
                 <Col sm={7}>

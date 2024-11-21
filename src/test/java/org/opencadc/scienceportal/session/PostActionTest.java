@@ -4,7 +4,7 @@ import ca.nrc.cadc.net.HttpPost;
 import ca.nrc.cadc.net.HttpRequestProperty;
 import ca.nrc.cadc.rest.SyncInput;
 import ca.nrc.cadc.util.Base64;
-import java.net.MalformedURLException;
+
 import java.net.URL;
 import java.util.HashSet;
 import java.util.List;
@@ -19,8 +19,8 @@ public class PostActionTest {
     public void createPostRequestMissingUsername() throws Exception {
         final SyncInput mockSyncInput = Mockito.mock(SyncInput.class);
 
-        Mockito.when(mockSyncInput.getHeader(PostAction.REGISTRY_AUTH_SECRET_FROM_BROWSER)).thenReturn("mysecret");
-        Mockito.when(mockSyncInput.getHeader(PostAction.REGISTRY_AUTH_USERNAME_FROM_BROWSER)).thenReturn(null);
+        Mockito.when(mockSyncInput.getHeader(PostAction.REPOSITORY_AUTH_SECRET_FROM_BROWSER)).thenReturn("mysecret");
+        Mockito.when(mockSyncInput.getHeader(PostAction.REPOSITORY_AUTH_USERNAME_FROM_BROWSER)).thenReturn(null);
         final Set<String> parameterNames = new HashSet<>();
 
         parameterNames.add("param1");
@@ -46,8 +46,8 @@ public class PostActionTest {
     public void createPostRequestMissingSecret() throws Exception {
         final SyncInput mockSyncInput = Mockito.mock(SyncInput.class);
 
-        Mockito.when(mockSyncInput.getHeader(PostAction.REGISTRY_AUTH_SECRET_FROM_BROWSER)).thenReturn(null);
-        Mockito.when(mockSyncInput.getHeader(PostAction.REGISTRY_AUTH_USERNAME_FROM_BROWSER)).thenReturn("username1");
+        Mockito.when(mockSyncInput.getHeader(PostAction.REPOSITORY_AUTH_SECRET_FROM_BROWSER)).thenReturn(null);
+        Mockito.when(mockSyncInput.getHeader(PostAction.REPOSITORY_AUTH_USERNAME_FROM_BROWSER)).thenReturn("username1");
         final Set<String> parameterNames = new HashSet<>();
 
         parameterNames.add("param1");
@@ -73,8 +73,8 @@ public class PostActionTest {
     public void createPostRequestPrivate() throws Exception {
         final SyncInput mockSyncInput = Mockito.mock(SyncInput.class);
 
-        Mockito.when(mockSyncInput.getHeader(PostAction.REGISTRY_AUTH_SECRET_FROM_BROWSER)).thenReturn("secret1");
-        Mockito.when(mockSyncInput.getHeader(PostAction.REGISTRY_AUTH_USERNAME_FROM_BROWSER)).thenReturn("username1");
+        Mockito.when(mockSyncInput.getHeader(PostAction.REPOSITORY_AUTH_SECRET_FROM_BROWSER)).thenReturn("secret1");
+        Mockito.when(mockSyncInput.getHeader(PostAction.REPOSITORY_AUTH_USERNAME_FROM_BROWSER)).thenReturn("username1");
         final Set<String> parameterNames = new HashSet<>();
 
         parameterNames.add("param1");

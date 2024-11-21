@@ -399,12 +399,21 @@
       event.preventDefault()
       portalCore.clearAjaxAlert(portalCore.pageSections.form)
 
-      const _prunedFormData = new FormData();
+      const _prunedFormData = new FormData()
+      const form = event.target
 
-      for (let i= 0; i < event.target.length; i++) {
-        const currentValue = event.target[i];
+      for (const currentValue of form) {
         _prunedFormData.append(currentValue.name, currentValue.value)
-        console.log(currentValue.name + ": " + currentValue.value)
+      }
+
+      // This is sent from the Private (Advanced) form
+      const repositoryHostFieldName = "repositoryHost"
+      if (_prunedFormData.has(repositoryHostFieldName)) {
+        const repositoryHost = _prunedFormData.get(repositoryHostFieldName)
+        const image = `${repositoryHost}/${_prunedFormData.get("image")}`
+
+        _prunedFormData.delete(repositoryHostFieldName)
+        _prunedFormData.set("image", image)
       }
 
       portalCore.setPageState(portalCore.pageSections.form, "primary", true, '')
@@ -454,12 +463,12 @@
         request.open("POST", serviceURL)
 
         // Request headers can only be set after the request is open.
-        const secretFieldName = "registryAuthSecret"
-        const secretHeader = "x-registry-secret"
-        const usernameHeader = "x-registry-username"
+        const secretFieldName = "repositoryAuthSecret"
+        const secretHeader = "x-repository-secret"
+        const usernameHeader = "x-repository-username"
         if (sessionData.has(secretFieldName)) {
           const secret = sessionData.get(secretFieldName)
-          const username = sessionData.get("registryAuthUsername")
+          const username = sessionData.get("repositoryAuthUsername")
           if (secret) {
             request.setRequestHeader(secretHeader, secret)
           }

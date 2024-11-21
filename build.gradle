@@ -9,6 +9,10 @@ plugins {
     id 'idea'
 }
 
+node {
+    version = '18.18.0'
+}
+
 repositories {
     mavenLocal()
     mavenCentral()
@@ -33,7 +37,7 @@ dependencies {
     runtimeOnly 'org.apache.taglibs:taglibs-standard-impl:1.2.5'
 
     testImplementation 'junit:junit:[4.12,5.0)'
-    testImplementation 'org.mockito:mockito-core:[5.14.0,6.0.0)'
+    testImplementation 'org.mockito:mockito-core:[4.11.0,5.0.0)'
 }
 
 sourceCompatibility = '1.8'
@@ -46,7 +50,7 @@ war {
         }
     }
 
-    archiveName 'science-portal.war'
+    archiveFileName = 'science-portal.war'
 }
 
 node {

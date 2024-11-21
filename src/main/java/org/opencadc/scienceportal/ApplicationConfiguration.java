@@ -6,27 +6,25 @@ import ca.nrc.cadc.reg.Standards;
 import ca.nrc.cadc.reg.client.LocalAuthority;
 import ca.nrc.cadc.reg.client.RegistryClient;
 import ca.nrc.cadc.util.StringUtil;
-
-import java.io.IOException;
-import java.net.URI;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.Date;
-
-import java.util.NoSuchElementException;
-import java.util.Set;
 import org.apache.commons.configuration2.CombinedConfiguration;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.SystemConfiguration;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
-import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.configuration2.tree.MergeCombiner;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.opencadc.token.Client;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.NoSuchElementException;
+import java.util.Set;
 
 
 public class ApplicationConfiguration {
@@ -35,12 +33,9 @@ public class ApplicationConfiguration {
     public static final long BUILD_TIME_MS = new Date().getTime();
 
     public static final String FIRST_PARTY_COOKIE_NAME = "__Host-science-portal-auth";
-
-    private static final Logger LOGGER = Logger.getLogger(ApplicationConfiguration.class);
-
     public static final String DEFAULT_CONFIG_FILE_PATH = System.getProperty("user.home")
-                                                          + "/config/org.opencadc.science-portal.properties";
-
+            + "/config/org.opencadc.science-portal.properties";
+    private static final Logger LOGGER = Logger.getLogger(ApplicationConfiguration.class);
     private final Configuration configuration;
     private final String filePath;
 
@@ -55,7 +50,8 @@ public class ApplicationConfiguration {
 
         final Parameters parameters = new Parameters();
         final FileBasedConfigurationBuilder<PropertiesConfiguration> builder =
-                new FileBasedConfigurationBuilder<>(PropertiesConfiguration.class).configure(parameters.properties().setFileName(filePath));
+                new FileBasedConfigurationBuilder<>(PropertiesConfiguration.class).configure(
+                        parameters.properties().setFileName(filePath));
 
         try {
             combinedConfiguration.addConfiguration(builder.getConfiguration());
@@ -89,6 +85,7 @@ public class ApplicationConfiguration {
     /**
      * Expected that the configuration is a forward slash list of tab labels.
      * <a href="https://commons.apache.org/proper/commons-configuration/userguide/howto_basicfeatures.html">Apache Configuration reference</a>
+     *
      * @return String array, never null.
      */
     public String[] getTabLabels() {
@@ -104,7 +101,8 @@ public class ApplicationConfiguration {
 
     /**
      * Pull the /applications header URLs.
-     * @return  JSONObject of header URIs to URLs.
+     *
+     * @return JSONObject of header URIs to URLs.
      */
     public JSONObject getHeaderURLs() {
         final RegistryClient registryClient = new RegistryClient();
@@ -143,7 +141,7 @@ public class ApplicationConfiguration {
 
         if (required && !StringUtil.hasText(val)) {
             throw new IllegalStateException("Configuration property " + key + " is missing or invalid at "
-                                            + this.filePath);
+                                                    + this.filePath);
         } else {
             return val;
         }
@@ -175,8 +173,8 @@ public class ApplicationConfiguration {
 
     public boolean isOIDCConfigured() {
         return StringUtil.hasText(getOIDCClientID()) && StringUtil.hasText(getOIDCClientSecret())
-               && StringUtil.hasText(getOIDCCallbackURI()) && StringUtil.hasText(getOIDCScope())
-               && StringUtil.hasText(getTokenCacheURLString());
+                && StringUtil.hasText(getOIDCCallbackURI()) && StringUtil.hasText(getOIDCScope())
+                && StringUtil.hasText(getTokenCacheURLString());
     }
 
     public Client getOIDCClient() throws IOException {

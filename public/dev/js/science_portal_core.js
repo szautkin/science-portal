@@ -20,7 +20,8 @@
               userInfoEndpoint: '/science-portal/userinfo',
               sessionEndpoint: '/science-portal/session',
               imageEndpoint: '/science-portal/image',
-              contextEndpoint: '/science-portal/context'
+              contextEndpoint: '/science-portal/context',
+              repositoryEndpoint: '/science-portal/repository',
             }
           }
         }
@@ -287,6 +288,7 @@
           "base": baseURL,
           "session": `${baseURL}${cadc.web.science.portal.core.sessionEndpoint}`,
           "context": `${baseURL}${cadc.web.science.portal.core.contextEndpoint}`,
+          "repositoryHosts": `${baseURL}${cadc.web.science.portal.core.repositoryEndpoint}`,
           "images": `${baseURL}${cadc.web.science.portal.core.imageEndpoint}`
         }
 

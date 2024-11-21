@@ -66,123 +66,30 @@
  ************************************************************************
  */
 
-package org.opencadc.scienceportal.session;
+package org.opencadc.scienceportal.repository;
 
 import ca.nrc.cadc.auth.AuthMethod;
-import ca.nrc.cadc.net.HttpPost;
 import ca.nrc.cadc.reg.Standards;
 import ca.nrc.cadc.reg.client.RegistryClient;
-import ca.nrc.cadc.rest.SyncInput;
-import ca.nrc.cadc.util.Base64;
-import ca.nrc.cadc.util.StringUtil;
 import org.opencadc.scienceportal.ApplicationConfiguration;
-import org.opencadc.scienceportal.SciencePortalAuthAction;
+import org.opencadc.scienceportal.SciencePortalAuthGetAction;
 
-import javax.security.auth.Subject;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
 
-public class PostAction extends SciencePortalAuthAction {
-    static final String SECRET_REQUEST_HEADER_NAME_TO_SKAHA = "x-skaha-registry-auth";
-    static final String REPOSITORY_AUTH_SECRET_FROM_BROWSER = "x-repository-secret";
-    static final String REPOSITORY_AUTH_USERNAME_FROM_BROWSER = "x-repository-username";
-    private static final String SESSION_ENDPOINT = "/session";
+public class GetAction extends SciencePortalAuthGetAction {
+    private static final String REGISTRY_ENDPOINT = "/repository";
 
-    PostAction(final SyncInput syncInput) {
-        this.syncInput = syncInput;
-    }
-
-    /**
-     * Not used explicitly, but needs to be present for the reflection-based client
-     */
-    public PostAction() {
-        super();
+    @Override
+    protected String getEndpoint() {
+        return GetAction.REGISTRY_ENDPOINT;
     }
 
     @Override
-    public void doAction() throws Exception {
-        final URL apiURL = buildAPIURL();
-        final Subject authenticatedUser = getCurrentSubject(apiURL);
-        final HttpPost httpPost = createPostRequest(apiURL);
-
-        try {
-            Subject.doAs(authenticatedUser, (PrivilegedExceptionAction<?>) () -> {
-                httpPost.prepare();
-                write(httpPost.getInputStream());
-
-                return null;
-            });
-        } catch (PrivilegedActionException privilegedActionException) {
-            throw privilegedActionException.getException();
-        }
-    }
-
-    HttpPost createPostRequest(final URL apiURL) {
-        final Map<String, Object> payload = new HashMap<>();
-        payload.putAll(syncInput.getParameterNames().stream()
-                                .collect(Collectors.toMap(key -> key,
-                                                          key -> syncInput.getParameter(key) == null
-                                                                  ? "" : syncInput.getParameter(key).trim())));
-
-        final HttpPost httpPost = new HttpPost(apiURL, payload, false);
-
-        final String repositorySecret = syncInput.getHeader(PostAction.REPOSITORY_AUTH_SECRET_FROM_BROWSER);
-        final String repositoryUsername = syncInput.getHeader(PostAction.REPOSITORY_AUTH_USERNAME_FROM_BROWSER);
-
-        if (StringUtil.hasText(repositorySecret)) {
-            if (StringUtil.hasText(repositoryUsername)) {
-                httpPost.setRequestProperty(PostAction.SECRET_REQUEST_HEADER_NAME_TO_SKAHA,
-                                            Base64.encodeString(repositoryUsername + ":" + repositorySecret));
-            } else {
-                throw new IllegalArgumentException("Secret specified but no username provided.");
-            }
-        } else if (StringUtil.hasText(repositoryUsername)) {
-            throw new IllegalArgumentException("Username specified but no secret provided.");
-        }
-
-        return httpPost;
-    }
-
-    URL buildAPIURL() throws MalformedURLException {
-        final StringBuilder apiURLBuilder = new StringBuilder(lookupAPIEndpoint().toExternalForm() + PostAction.SESSION_ENDPOINT);
-
-        // Preserve path items.
-        final String path = this.syncInput.getPath();
-        if (StringUtil.hasText(path)) {
-            if (!path.trim().startsWith("/")) {
-                apiURLBuilder.append("/");
-            }
-
-            apiURLBuilder.append(path);
-        }
-
-        return new URL(apiURLBuilder.toString());
-    }
-
-    URL lookupAPIEndpoint() {
+    protected URL getAPIURL() {
         final ApplicationConfiguration applicationConfiguration = new ApplicationConfiguration();
         final URI apiServiceURI = URI.create(applicationConfiguration.getResourceID());
         final RegistryClient registryClient = new RegistryClient();
         return registryClient.getServiceURL(apiServiceURI, Standards.PROC_SESSIONS_10, AuthMethod.TOKEN);
-    }
-
-    void write(final InputStream inputStream) throws IOException {
-        final BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-        String line;
-        while ((line = reader.readLine()) != null) {
-            this.syncOutput.getOutputStream().write(line.getBytes(StandardCharsets.UTF_8));
-        }
-        this.syncOutput.getOutputStream().flush();
     }
 }
