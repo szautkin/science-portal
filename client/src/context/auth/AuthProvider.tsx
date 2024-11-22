@@ -72,7 +72,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         [APP_FETCH_URL]: `${BASE_URL}${USERINFO_URL}`,
         [APP_PART_TYPE]: RETRIEVING_USER,
       });
-      console.log('do we have a response?', responseData);
       if (responseData?.[APP_FETCH_RESULT]?.name) {
         dispatch({
           type: LOGIN,

@@ -5,7 +5,9 @@ export const BASE_HOST_URL = 'https://www.canfar.net';
 export const SCIENCE_PORTAL_URL = `${BASE_HOST_URL}/science-portal`;
 
 // API
-export const BASE_URL = '/api';
+const isDev = import.meta.env.DEV;
+
+export const BASE_URL = isDev ? '/api' : '/science-portal';
 export const IMAGE_URL = '/image';
 export const SESSION_URL = '/session';
 export const RENEW_SESSION_URL = '/renew_session';

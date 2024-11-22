@@ -60,17 +60,21 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
   const fetchStatsData = useCallback(async () => {
     try {
       const responseData = await appFetch({
-        [APP_FETCH_URL]: `${BASE_URL}${SESSION_VIEW_URL}`,
-        [APP_FETCH_OPTIONS]: {
-          method: 'POST',
-          body: JSON.stringify({ cookie: authState.cookie }),
-        },
+        [APP_FETCH_URL]: `${BASE_URL}${SESSION_URL}/?view=stats`,
         [APP_PART_TYPE]: SESSION_STATS,
       });
+      console.log('reprocessedStatsData', reprocessedStatsData);
+      console.log(
+          'responseData?.[APP_FETCH_RESULT]',
+          responseData?.[APP_FETCH_RESULT],
+      );
       const rawStatsData = responseData?.[APP_FETCH_RESULT].data as unknown;
       const reprocessedStatsData = processPlatformUsage(
         rawStatsData as StatsData,
       );
+
+
+
       dispatch({ type: SET_SESSIONS_STATS, payload: reprocessedStatsData });
     } catch (e) {
       console.error('Fetch data stats failed:', e);
@@ -81,10 +85,6 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       const sessionsData = await appFetch({
         [APP_FETCH_URL]: `${BASE_URL}${SESSION_URL}`,
-        [APP_FETCH_OPTIONS]: {
-          method: 'POST',
-          body: JSON.stringify({ cookie: authState.cookie }),
-        },
         [APP_PART_TYPE]: RUNNING_SESSIONS,
       });
       const rawSessions = sessionsData?.[APP_FETCH_RESULT]?.data as unknown;
@@ -104,11 +104,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
     async (sessionId: string) => {
       try {
         await appFetch({
-          [APP_FETCH_URL]: `${BASE_URL}${DELETE_SESSION_URL}`,
-          [APP_FETCH_OPTIONS]: {
-            method: 'DELETE',
-            body: JSON.stringify({ cookie: authState.cookie, sessionId }),
-          },
+          [APP_FETCH_URL]: `${BASE_URL}${DELETE_SESSION_URL}/${sessionId}`,
           [APP_PART_TYPE]: DELETE_SESSION,
         });
         fetchRunningSessions();
@@ -125,7 +121,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
         const renewSession = await appFetch({
           [APP_FETCH_URL]: `${BASE_URL}${RENEW_SESSION_URL}`,
           [APP_FETCH_OPTIONS]: {
-            method: 'POST',
+            method: 'GET',
             body: JSON.stringify({ cookie: authState.cookie, sessionId }),
           },
           [APP_PART_TYPE]: RENEW_SESSION,
@@ -144,11 +140,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
     async (sessionId: string) => {
       try {
         const sessionData = await appFetch({
-          [APP_FETCH_URL]: `${BASE_URL}${FETCH_SESSION_URL}`,
-          [APP_FETCH_OPTIONS]: {
-            method: 'POST',
-            body: JSON.stringify({ cookie: authState.cookie, sessionId }),
-          },
+          [APP_FETCH_URL]: `${BASE_URL}${FETCH_SESSION_URL}/${sessionId}`,
           [APP_PART_TYPE]: FETCHING_SESSION,
         });
         const rawSession = sessionData?.[APP_FETCH_RESULT]?.data as unknown;
@@ -168,10 +160,6 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       const contextData = await appFetch({
         [APP_FETCH_URL]: `${BASE_URL}${CONTEXT_URL}`,
-        [APP_FETCH_OPTIONS]: {
-          method: 'POST',
-          body: JSON.stringify({ cookie: authState.cookie }),
-        },
         [APP_PART_TYPE]: PLATFORM_CONTEXT,
       });
       const rawContext = contextData?.[APP_FETCH_RESULT]?.data as unknown;
@@ -188,10 +176,6 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       const imagesData = await appFetch({
         [APP_FETCH_URL]: `${BASE_URL}${IMAGE_URL}`,
-        [APP_FETCH_OPTIONS]: {
-          method: 'POST',
-          body: JSON.stringify({ cookie: authState.cookie }),
-        },
         [APP_PART_TYPE]: AVAILABLE_IMAGES,
       });
       const rawImages = imagesData?.[APP_FETCH_RESULT]?.data as unknown;
