@@ -68,19 +68,15 @@
 
 package org.opencadc.scienceportal;
 
-import ca.nrc.cadc.auth.AuthenticationUtil;
 import ca.nrc.cadc.net.HttpGet;
-import ca.nrc.cadc.rest.InlineContentHandler;
-import ca.nrc.cadc.rest.RestAction;
 import ca.nrc.cadc.util.StringUtil;
-
-import javax.security.auth.Subject;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.PrivilegedExceptionAction;
 import java.util.stream.Collectors;
+import javax.security.auth.Subject;
 
 public abstract class SciencePortalAuthGetAction extends SciencePortalAuthAction {
 
@@ -99,16 +95,14 @@ public abstract class SciencePortalAuthGetAction extends SciencePortalAuthAction
         if (!syncInput.getParameterNames().isEmpty()) {
             query = (StringUtil.hasText(apiEndpointURL.getQuery()) ? "&" : "?")
                     + syncInput.getParameterNames().stream()
-                               .map(k -> k + "=" + this.syncInput.getParameter(k))
-                               .collect(Collectors.joining("&"));
+                            .map(k -> k + "=" + this.syncInput.getParameter(k))
+                            .collect(Collectors.joining("&"));
         } else {
             query = "";
         }
 
         Subject.doAs(subject, (PrivilegedExceptionAction<?>) () -> {
-            final HttpGet httpGet =
-                    new HttpGet(new URL(apiEndpoint + query),
-                                true);
+            final HttpGet httpGet = new HttpGet(new URL(apiEndpoint + query), true);
             httpGet.setRequestProperty("accept", "application/json");
             httpGet.prepare();
 

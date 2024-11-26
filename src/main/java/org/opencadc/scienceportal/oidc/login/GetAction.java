@@ -68,9 +68,8 @@
 
 package org.opencadc.scienceportal.oidc.login;
 
-import org.opencadc.scienceportal.SciencePortalAuthAction;
-
 import javax.servlet.http.HttpServletResponse;
+import org.opencadc.scienceportal.SciencePortalAuthAction;
 
 public class GetAction extends SciencePortalAuthAction {
     @Override

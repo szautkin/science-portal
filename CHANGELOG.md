@@ -1,5 +1,56 @@
 ## Oct 23, 2023
 
+## [0.5.3](https://github.com/opencadc/science-portal/compare/0.5.2...0.5.3) (2024-11-25)
+
+
+### Bug Fixes
+
+* increment old version file to force release build ([c742d91](https://github.com/opencadc/science-portal/commit/c742d91f3cf8c385ce4cff8a2d916101ce8f86c8))
+
+
+### Miscellaneous Chores
+
+* release 0.5.2 ([bd4f393](https://github.com/opencadc/science-portal/commit/bd4f393800747035093777cf210b1440e1a75027))
+* release 0.5.3 ([8273ab7](https://github.com/opencadc/science-portal/commit/8273ab75aa4f78dfb807402b7e7dd2f70634aa35))
+
+## [0.5.2](https://github.com/opencadc/science-portal/compare/0.5.1...0.5.2) (2024-11-25)
+
+
+### Bug Fixes
+
+* fix for image sha name for cosign ([e96adc4](https://github.com/opencadc/science-portal/commit/e96adc4946fa435250bddd78262ac34bd16b39d0))
+
+## [0.5.1](https://github.com/opencadc/science-portal/compare/0.5.0...0.5.1) (2024-11-25)
+
+
+### Miscellaneous Chores
+
+* release 0.5.1 ([635b65c](https://github.com/opencadc/science-portal/commit/635b65cffd83cdbe8330c9cd2a419b97c1ab2b74))
+
+## [0.5.0](https://github.com/opencadc/science-portal/compare/v0.4.0...0.5.0) (2024-11-22)
+
+
+### Features
+
+* add tabs for private and public images ([0ead427](https://github.com/opencadc/science-portal/commit/0ead427f0c7261a8ba2972d5b3898183c62d78ca))
+* allow external images with credentials ([92159e5](https://github.com/opencadc/science-portal/commit/92159e5bbf1cd22e4b848760ed15dcf3babbcede))
+* rename registryxxx to repositoryxxx to separate from ivoa registry and add configured repository hosts to ui ([ed1d6a8](https://github.com/opencadc/science-portal/commit/ed1d6a8096c38cd75f069e15a22e2cf9f76317c5))
+
+
+### Bug Fixes
+
+* add dependency submission to a separate file to only run on push to main ([85596ae](https://github.com/opencadc/science-portal/commit/85596aeb194fbb2bc0f16b42fd8123b4b4a865c6))
+* create configurable tab labels ([2ae44a7](https://github.com/opencadc/science-portal/commit/2ae44a71dda7ab37d3574930478cd64f2a26fde9))
+* fix cred certificate link ([3bbb1b5](https://github.com/opencadc/science-portal/commit/3bbb1b52a1e150895ea4adc0d99c552e84ecd757))
+* fix release file ([eccc7c9](https://github.com/opencadc/science-portal/commit/eccc7c93bb905353db8772b3e29445add1adb8ce))
+* include public no arg constructor ([6ed9cd0](https://github.com/opencadc/science-portal/commit/6ed9cd09c8d04c9338cd5958ed1fabb24beb8d10))
+* make jdk 8 compatible ([cf98687](https://github.com/opencadc/science-portal/commit/cf986873d2f1e1304be407460b698ec43ba74df8))
+* make label names configurable ([1c7eff1](https://github.com/opencadc/science-portal/commit/1c7eff1bc8e8fb902250886b31cf9d4b0f3bfa34))
+* remove critical vulnerability ([6d52ec8](https://github.com/opencadc/science-portal/commit/6d52ec8ca528be6009c14fd42a57f0fb5cb8e605))
+* remove inappropriate close button and add optional chaining to map calls ([3b6e5fa](https://github.com/opencadc/science-portal/commit/3b6e5fa32e7de2db806b68135a5cbd7e5b9923da))
+* restyle form ([2b7e56d](https://github.com/opencadc/science-portal/commit/2b7e56decd2d385563546ed34def0d28c09e304a))
+* review rework to ratchet from main and sanitize a tag for release ([baab3e2](https://github.com/opencadc/science-portal/commit/baab3e2c31530710717d0d0a53646961e5c7e4c1))
+
 ### 3.5
 - Add OpenID Connect capabilities
 - Add themes to support SRC (`src`) and CANFAR (`canfar`)
@@ -77,7 +128,3 @@ Major changes
 - Adding list of available sessions
 - Support multiple session types (notebook, desktop, carta)
 - Ability to delete sessions through UI
-
-
-
-

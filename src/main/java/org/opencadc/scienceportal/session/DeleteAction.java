@@ -72,20 +72,20 @@ import ca.nrc.cadc.auth.AuthMethod;
 import ca.nrc.cadc.net.HttpDelete;
 import ca.nrc.cadc.reg.Standards;
 import ca.nrc.cadc.reg.client.RegistryClient;
-import ca.nrc.cadc.rest.InlineContentHandler;
-import org.opencadc.scienceportal.ApplicationConfiguration;
-import org.opencadc.scienceportal.SciencePortalAuthAction;
-
-import javax.security.auth.Subject;
 import java.net.URI;
 import java.net.URL;
 import java.security.PrivilegedExceptionAction;
+import javax.security.auth.Subject;
+import org.opencadc.scienceportal.ApplicationConfiguration;
+import org.opencadc.scienceportal.SciencePortalAuthAction;
 
 public class DeleteAction extends SciencePortalAuthAction {
     @Override
     public void doAction() throws Exception {
         final URL apiURL = new URL(getAPIURL().toExternalForm()
-                                   + syncInput.getRequestPath().substring(syncInput.getContextPath().length()));
+                + syncInput
+                        .getRequestPath()
+                        .substring(syncInput.getContextPath().length()));
 
         final Subject authenticatedUser = getCurrentSubject(apiURL);
 

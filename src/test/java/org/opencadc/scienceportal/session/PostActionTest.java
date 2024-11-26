@@ -4,7 +4,6 @@ import ca.nrc.cadc.net.HttpPost;
 import ca.nrc.cadc.net.HttpRequestProperty;
 import ca.nrc.cadc.rest.SyncInput;
 import ca.nrc.cadc.util.Base64;
-
 import java.net.URL;
 import java.util.HashSet;
 import java.util.List;
@@ -19,8 +18,10 @@ public class PostActionTest {
     public void createPostRequestMissingUsername() throws Exception {
         final SyncInput mockSyncInput = Mockito.mock(SyncInput.class);
 
-        Mockito.when(mockSyncInput.getHeader(PostAction.REPOSITORY_AUTH_SECRET_FROM_BROWSER)).thenReturn("mysecret");
-        Mockito.when(mockSyncInput.getHeader(PostAction.REPOSITORY_AUTH_USERNAME_FROM_BROWSER)).thenReturn(null);
+        Mockito.when(mockSyncInput.getHeader(PostAction.REPOSITORY_AUTH_SECRET_FROM_BROWSER))
+                .thenReturn("mysecret");
+        Mockito.when(mockSyncInput.getHeader(PostAction.REPOSITORY_AUTH_USERNAME_FROM_BROWSER))
+                .thenReturn(null);
         final Set<String> parameterNames = new HashSet<>();
 
         parameterNames.add("param1");
@@ -35,7 +36,10 @@ public class PostActionTest {
             testSubject.createPostRequest(postURL);
             Assert.fail("Should throw an IllegalArgumentException");
         } catch (IllegalArgumentException illegalArgumentException) {
-            Assert.assertEquals("Wrong exception message", "Secret specified but no username provided.", illegalArgumentException.getMessage());
+            Assert.assertEquals(
+                    "Wrong exception message",
+                    "Secret specified but no username provided.",
+                    illegalArgumentException.getMessage());
         }
 
         Mockito.verify(mockSyncInput, Mockito.times(1)).getParameterNames();
@@ -46,8 +50,10 @@ public class PostActionTest {
     public void createPostRequestMissingSecret() throws Exception {
         final SyncInput mockSyncInput = Mockito.mock(SyncInput.class);
 
-        Mockito.when(mockSyncInput.getHeader(PostAction.REPOSITORY_AUTH_SECRET_FROM_BROWSER)).thenReturn(null);
-        Mockito.when(mockSyncInput.getHeader(PostAction.REPOSITORY_AUTH_USERNAME_FROM_BROWSER)).thenReturn("username1");
+        Mockito.when(mockSyncInput.getHeader(PostAction.REPOSITORY_AUTH_SECRET_FROM_BROWSER))
+                .thenReturn(null);
+        Mockito.when(mockSyncInput.getHeader(PostAction.REPOSITORY_AUTH_USERNAME_FROM_BROWSER))
+                .thenReturn("username1");
         final Set<String> parameterNames = new HashSet<>();
 
         parameterNames.add("param1");
@@ -62,7 +68,10 @@ public class PostActionTest {
             testSubject.createPostRequest(postURL);
             Assert.fail("Should throw an IllegalArgumentException");
         } catch (IllegalArgumentException illegalArgumentException) {
-            Assert.assertEquals("Wrong exception message", "Username specified but no secret provided.", illegalArgumentException.getMessage());
+            Assert.assertEquals(
+                    "Wrong exception message",
+                    "Username specified but no secret provided.",
+                    illegalArgumentException.getMessage());
         }
 
         Mockito.verify(mockSyncInput, Mockito.times(1)).getParameterNames();
@@ -73,8 +82,10 @@ public class PostActionTest {
     public void createPostRequestPrivate() throws Exception {
         final SyncInput mockSyncInput = Mockito.mock(SyncInput.class);
 
-        Mockito.when(mockSyncInput.getHeader(PostAction.REPOSITORY_AUTH_SECRET_FROM_BROWSER)).thenReturn("secret1");
-        Mockito.when(mockSyncInput.getHeader(PostAction.REPOSITORY_AUTH_USERNAME_FROM_BROWSER)).thenReturn("username1");
+        Mockito.when(mockSyncInput.getHeader(PostAction.REPOSITORY_AUTH_SECRET_FROM_BROWSER))
+                .thenReturn("secret1");
+        Mockito.when(mockSyncInput.getHeader(PostAction.REPOSITORY_AUTH_USERNAME_FROM_BROWSER))
+                .thenReturn("username1");
         final Set<String> parameterNames = new HashSet<>();
 
         parameterNames.add("param1");
@@ -97,8 +108,14 @@ public class PostActionTest {
         Assert.assertEquals("Wrong value2", "value2", postParameters.get("param2"));
 
         final List<HttpRequestProperty> postProperties = httpPost.getRequestProperties();
-        Assert.assertEquals("Wrong auth header", PostAction.SECRET_REQUEST_HEADER_NAME_TO_SKAHA, postProperties.get(0).getProperty());
-        Assert.assertEquals("Wrong auth header value", Base64.encodeString("username1:secret1"), postProperties.get(0).getValue());
+        Assert.assertEquals(
+                "Wrong auth header",
+                PostAction.SECRET_REQUEST_HEADER_NAME_TO_SKAHA,
+                postProperties.get(0).getProperty());
+        Assert.assertEquals(
+                "Wrong auth header value",
+                Base64.encodeString("username1:secret1"),
+                postProperties.get(0).getValue());
 
         Mockito.verify(mockSyncInput, Mockito.times(1)).getParameterNames();
         Mockito.verify(mockSyncInput, Mockito.times(2)).getParameter("param1");

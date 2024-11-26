@@ -75,10 +75,6 @@ import ca.nrc.cadc.reg.client.RegistryClient;
 import ca.nrc.cadc.rest.SyncInput;
 import ca.nrc.cadc.util.Base64;
 import ca.nrc.cadc.util.StringUtil;
-import org.opencadc.scienceportal.ApplicationConfiguration;
-import org.opencadc.scienceportal.SciencePortalAuthAction;
-
-import javax.security.auth.Subject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -92,6 +88,9 @@ import java.security.PrivilegedExceptionAction;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
+import javax.security.auth.Subject;
+import org.opencadc.scienceportal.ApplicationConfiguration;
+import org.opencadc.scienceportal.SciencePortalAuthAction;
 
 public class PostAction extends SciencePortalAuthAction {
     static final String SECRET_REQUEST_HEADER_NAME_TO_SKAHA = "x-skaha-registry-auth";
@@ -131,9 +130,11 @@ public class PostAction extends SciencePortalAuthAction {
     HttpPost createPostRequest(final URL apiURL) {
         final Map<String, Object> payload = new HashMap<>();
         payload.putAll(syncInput.getParameterNames().stream()
-                                .collect(Collectors.toMap(key -> key,
-                                                          key -> syncInput.getParameter(key) == null
-                                                                  ? "" : syncInput.getParameter(key).trim())));
+                .collect(Collectors.toMap(
+                        key -> key,
+                        key -> syncInput.getParameter(key) == null
+                                ? ""
+                                : syncInput.getParameter(key).trim())));
 
         final HttpPost httpPost = new HttpPost(apiURL, payload, false);
 
@@ -142,8 +143,9 @@ public class PostAction extends SciencePortalAuthAction {
 
         if (StringUtil.hasText(repositorySecret)) {
             if (StringUtil.hasText(repositoryUsername)) {
-                httpPost.setRequestProperty(PostAction.SECRET_REQUEST_HEADER_NAME_TO_SKAHA,
-                                            Base64.encodeString(repositoryUsername + ":" + repositorySecret));
+                httpPost.setRequestProperty(
+                        PostAction.SECRET_REQUEST_HEADER_NAME_TO_SKAHA,
+                        Base64.encodeString(repositoryUsername + ":" + repositorySecret));
             } else {
                 throw new IllegalArgumentException("Secret specified but no username provided.");
             }
@@ -155,7 +157,8 @@ public class PostAction extends SciencePortalAuthAction {
     }
 
     URL buildAPIURL() throws MalformedURLException {
-        final StringBuilder apiURLBuilder = new StringBuilder(lookupAPIEndpoint().toExternalForm() + PostAction.SESSION_ENDPOINT);
+        final StringBuilder apiURLBuilder =
+                new StringBuilder(lookupAPIEndpoint().toExternalForm() + PostAction.SESSION_ENDPOINT);
 
         // Preserve path items.
         final String path = this.syncInput.getPath();

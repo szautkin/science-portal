@@ -76,18 +76,16 @@ import ca.nrc.cadc.auth.SSOCookieCredential;
 import ca.nrc.cadc.rest.InlineContentHandler;
 import ca.nrc.cadc.rest.RestAction;
 import ca.nrc.cadc.util.StringUtil;
-import java.net.URL;
-import java.util.Set;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.opencadc.token.Client;
-
-import javax.security.auth.Subject;
 import java.io.IOException;
-import java.net.URI;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.NoSuchElementException;
+import java.util.Set;
+import javax.security.auth.Subject;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.opencadc.token.Client;
 
 /**
  * Base class to support storing the OIDC Access Token in a cookie.
@@ -112,27 +110,28 @@ public abstract class SciencePortalAuthAction extends RestAction {
         final Subject subject = AuthenticationUtil.getCurrentSubject();
 
         if (StringUtil.hasText(rawCookieHeader)) {
-            final String[] firstPartyCookies =
-                Arrays.stream(rawCookieHeader.split(";"))
-                      .map(String::trim)
-                      .filter(cookieString -> cookieString.startsWith(
-                          ApplicationConfiguration.FIRST_PARTY_COOKIE_NAME))
-                      .toArray(String[]::new);
+            final String[] firstPartyCookies = Arrays.stream(rawCookieHeader.split(";"))
+                    .map(String::trim)
+                    .filter(cookieString -> cookieString.startsWith(ApplicationConfiguration.FIRST_PARTY_COOKIE_NAME))
+                    .toArray(String[]::new);
 
             if (firstPartyCookies.length > 0 && applicationConfiguration.isOIDCConfigured()) {
                 for (final String cookie : firstPartyCookies) {
                     // Only split on the first "=" symbol, and trim any wrapping double quotes
-                    final String encryptedCookieValue =
-                        cookie.split("=", 2)[1].replaceAll("\"", "");
+                    final String encryptedCookieValue = cookie.split("=", 2)[1].replaceAll("\"", "");
 
                     try {
                         final String accessToken = getOIDCClient().getAccessToken(encryptedCookieValue);
 
-                        subject.getPrincipals().add(new AuthorizationTokenPrincipal(AuthenticationUtil.AUTHORIZATION_HEADER,
-                                                                                    AuthenticationUtil.CHALLENGE_TYPE_BEARER
-                                                                                    + " " + accessToken));
-                        subject.getPublicCredentials().add(new AuthorizationToken(AuthenticationUtil.CHALLENGE_TYPE_BEARER, accessToken,
-                                                                                  Collections.singletonList(targetURL.getHost())));
+                        subject.getPrincipals()
+                                .add(new AuthorizationTokenPrincipal(
+                                        AuthenticationUtil.AUTHORIZATION_HEADER,
+                                        AuthenticationUtil.CHALLENGE_TYPE_BEARER + " " + accessToken));
+                        subject.getPublicCredentials()
+                                .add(new AuthorizationToken(
+                                        AuthenticationUtil.CHALLENGE_TYPE_BEARER,
+                                        accessToken,
+                                        Collections.singletonList(targetURL.getHost())));
                     } catch (NoSuchElementException noTokenForKeyInCacheException) {
                         LOGGER.warn("Cookie found and decrypted but no value in cache.  Ignoring cookie...");
                     }
@@ -140,16 +139,21 @@ public abstract class SciencePortalAuthAction extends RestAction {
 
                 if (!subject.getPrincipals(AuthorizationTokenPrincipal.class).isEmpty()) {
                     // Ensure it's clean first.
-                    subject.getPublicCredentials(AuthMethod.class)
-                           .forEach(authMethod -> subject.getPublicCredentials().remove(authMethod));
+                    subject.getPublicCredentials(AuthMethod.class).forEach(authMethod -> subject.getPublicCredentials()
+                            .remove(authMethod));
                     subject.getPublicCredentials().add(AuthMethod.TOKEN);
                 }
             } else if (AuthenticationUtil.getAuthMethod(subject) == AuthMethod.COOKIE) {
-                final Set<SSOCookieCredential> publicCookieCredentials = subject.getPublicCredentials(SSOCookieCredential.class);
+                final Set<SSOCookieCredential> publicCookieCredentials =
+                        subject.getPublicCredentials(SSOCookieCredential.class);
                 if (!publicCookieCredentials.isEmpty()) {
-                    final SSOCookieCredential publicCookieCredential = publicCookieCredentials.toArray(new SSOCookieCredential[0])[0];
-                    subject.getPublicCredentials().add(new SSOCookieCredential(publicCookieCredential.getSsoCookieValue(), targetURL.getHost(),
-                                                                               publicCookieCredential.getExpiryDate()));
+                    final SSOCookieCredential publicCookieCredential =
+                            publicCookieCredentials.toArray(new SSOCookieCredential[0])[0];
+                    subject.getPublicCredentials()
+                            .add(new SSOCookieCredential(
+                                    publicCookieCredential.getSsoCookieValue(),
+                                    targetURL.getHost(),
+                                    publicCookieCredential.getExpiryDate()));
                 }
             }
         }

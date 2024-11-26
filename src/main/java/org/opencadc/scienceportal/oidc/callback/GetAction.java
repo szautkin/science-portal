@@ -69,19 +69,17 @@
 package org.opencadc.scienceportal.oidc.callback;
 
 import ca.nrc.cadc.util.StringUtil;
-import org.opencadc.token.Client;
-import org.opencadc.scienceportal.ApplicationConfiguration;
-import org.opencadc.scienceportal.SciencePortalAuthAction;
-
-import javax.servlet.http.HttpServletResponse;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
-
+import javax.servlet.http.HttpServletResponse;
+import org.opencadc.scienceportal.ApplicationConfiguration;
+import org.opencadc.scienceportal.SciencePortalAuthAction;
+import org.opencadc.token.Client;
 
 public class GetAction extends SciencePortalAuthAction {
-    private static final String COOKIE_FORMAT = ApplicationConfiguration.FIRST_PARTY_COOKIE_NAME
-                                                + "=%s; Path=/; Secure; HttpOnly";
+    private static final String COOKIE_FORMAT =
+            ApplicationConfiguration.FIRST_PARTY_COOKIE_NAME + "=%s; Path=/; Secure; HttpOnly";
 
     @Override
     public void doAction() throws Exception {
@@ -93,20 +91,18 @@ public class GetAction extends SciencePortalAuthAction {
     }
 
     void setCookie(final byte[] encryptedAssetsKey) {
-        syncOutput.setHeader("set-cookie", String.format(GetAction.COOKIE_FORMAT,
-                                                         new String(encryptedAssetsKey,
-                                                                    StandardCharsets.ISO_8859_1)));
+        syncOutput.setHeader(
+                "set-cookie",
+                String.format(GetAction.COOKIE_FORMAT, new String(encryptedAssetsKey, StandardCharsets.ISO_8859_1)));
     }
 
     URI getRequestURI() {
         final String requestSchemeHostPath = this.syncInput.getRequestURI();
-        final String requestQueryString =
-                this.syncInput.getParameterNames().stream()
-                              .map(parameterName -> String.format("%s=%s", parameterName,
-                                                                  this.syncInput.getParameter(parameterName)))
-                              .collect(Collectors.joining("&"));
-        return URI.create(requestSchemeHostPath + (StringUtil.hasText(requestQueryString)
-                                                   ? "?" + requestQueryString : ""));
+        final String requestQueryString = this.syncInput.getParameterNames().stream()
+                .map(parameterName -> String.format("%s=%s", parameterName, this.syncInput.getParameter(parameterName)))
+                .collect(Collectors.joining("&"));
+        return URI.create(
+                requestSchemeHostPath + (StringUtil.hasText(requestQueryString) ? "?" + requestQueryString : ""));
     }
 
     void redirectToCallback(final Client oidcClient) {

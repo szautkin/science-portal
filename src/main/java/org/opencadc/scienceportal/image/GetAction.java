@@ -71,11 +71,10 @@ package org.opencadc.scienceportal.image;
 import ca.nrc.cadc.auth.AuthMethod;
 import ca.nrc.cadc.reg.Standards;
 import ca.nrc.cadc.reg.client.RegistryClient;
-import org.opencadc.scienceportal.ApplicationConfiguration;
-import org.opencadc.scienceportal.SciencePortalAuthGetAction;
-
 import java.net.URI;
 import java.net.URL;
+import org.opencadc.scienceportal.ApplicationConfiguration;
+import org.opencadc.scienceportal.SciencePortalAuthGetAction;
 
 public class GetAction extends SciencePortalAuthGetAction {
     private static final String IMAGE_ENDPOINT = "/image";

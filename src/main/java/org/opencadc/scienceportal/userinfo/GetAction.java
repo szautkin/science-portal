@@ -74,18 +74,16 @@ import ca.nrc.cadc.auth.NotAuthenticatedException;
 import ca.nrc.cadc.net.HttpGet;
 import ca.nrc.cadc.reg.Standards;
 import ca.nrc.cadc.reg.client.RegistryClient;
-import org.json.JSONObject;
-import org.opencadc.scienceportal.ApplicationConfiguration;
-import org.opencadc.scienceportal.SciencePortalAuthAction;
-
-import javax.security.auth.Subject;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.PrivilegedExceptionAction;
-
+import javax.security.auth.Subject;
+import javax.servlet.http.HttpServletResponse;
+import org.json.JSONObject;
+import org.opencadc.scienceportal.ApplicationConfiguration;
+import org.opencadc.scienceportal.SciencePortalAuthAction;
 
 public class GetAction extends SciencePortalAuthAction {
     @Override
@@ -104,14 +102,15 @@ public class GetAction extends SciencePortalAuthAction {
                     syncOutput.setHeader("content-type", "application/json");
                     final JSONObject jsonObject = new JSONObject();
                     final Subject validatedSubject = AuthenticationUtil.validateSubject(subjectFromCookie);
-                    jsonObject.put("name", AuthenticationUtil.getIdentityManager().toDisplayString(validatedSubject));
+                    jsonObject.put(
+                            "name", AuthenticationUtil.getIdentityManager().toDisplayString(validatedSubject));
                     syncOutput.getOutputStream().write(jsonObject.toString().getBytes(StandardCharsets.UTF_8));
                     syncOutput.getOutputStream().flush();
                 }
             } catch (RuntimeException runtimeException) {
                 // The Skaha API throws a RuntimeException when looking up the capabilities with an old Token.
                 if ((runtimeException.getCause() instanceof IOException)
-                    && (runtimeException.getCause().getCause() instanceof NotAuthenticatedException)) {
+                        && (runtimeException.getCause().getCause() instanceof NotAuthenticatedException)) {
                     syncOutput.setCode(HttpServletResponse.SC_UNAUTHORIZED);
                     return null;
                 }
@@ -131,11 +130,11 @@ public class GetAction extends SciencePortalAuthAction {
         final ApplicationConfiguration applicationConfiguration = new ApplicationConfiguration();
         final URI apiServiceURI = URI.create(applicationConfiguration.getResourceID());
         final RegistryClient registryClient = new RegistryClient();
-        final URL registryServiceBaseURL = registryClient.getServiceURL(apiServiceURI, Standards.PROC_SESSIONS_10,
-                                                                        AuthMethod.TOKEN);
+        final URL registryServiceBaseURL =
+                registryClient.getServiceURL(apiServiceURI, Standards.PROC_SESSIONS_10, AuthMethod.TOKEN);
         if (registryServiceBaseURL == null) {
             throw new IOException("The Skaha web service is not configured in the Registry.  Please ensure that "
-                                  + apiServiceURI + " exists.");
+                    + apiServiceURI + " exists.");
         }
 
         return new URL(registryServiceBaseURL.toExternalForm() + "/session");
