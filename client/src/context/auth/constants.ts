@@ -1,7 +1,7 @@
 // API
 const isDev = import.meta.env.DEV;
 
-export const BASE_URL = isDev ? '/api' : '/science-portal';
+export const BASE_URL = '/science-portal';
 export const LOGIN_URL = '/access/login';
 export const LOGOUT_URL = '/access/logout';
 export const USERINFO_URL = '/userinfo';

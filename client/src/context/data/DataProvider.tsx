@@ -63,17 +63,11 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
         [APP_FETCH_URL]: `${BASE_URL}${SESSION_URL}/?view=stats`,
         [APP_PART_TYPE]: SESSION_STATS,
       });
-      console.log('reprocessedStatsData', reprocessedStatsData);
-      console.log(
-          'responseData?.[APP_FETCH_RESULT]',
-          responseData?.[APP_FETCH_RESULT],
-      );
-      const rawStatsData = responseData?.[APP_FETCH_RESULT].data as unknown;
+
+      const rawStatsData = responseData?.[APP_FETCH_RESULT] as unknown;
       const reprocessedStatsData = processPlatformUsage(
         rawStatsData as StatsData,
       );
-
-
 
       dispatch({ type: SET_SESSIONS_STATS, payload: reprocessedStatsData });
     } catch (e) {
@@ -87,7 +81,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
         [APP_FETCH_URL]: `${BASE_URL}${SESSION_URL}`,
         [APP_PART_TYPE]: RUNNING_SESSIONS,
       });
-      const rawSessions = sessionsData?.[APP_FETCH_RESULT]?.data as unknown;
+      const rawSessions = sessionsData?.[APP_FETCH_RESULT] as unknown;
       const reprocessedSessions = getTransformedSessions(
         rawSessions as Session[],
       );
@@ -107,7 +101,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
           [APP_FETCH_URL]: `${BASE_URL}${DELETE_SESSION_URL}/${sessionId}`,
           [APP_PART_TYPE]: DELETE_SESSION,
         });
-        fetchRunningSessions();
+        await fetchRunningSessions();
       } catch (e) {
         console.error('Fetch delete sessions failed:', e);
       }
@@ -127,7 +121,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
           [APP_PART_TYPE]: RENEW_SESSION,
         });
         if (renewSession) {
-          fetchRunningSessions();
+          await fetchRunningSessions();
         }
       } catch (e) {
         console.error('Fetch renew sessions failed:', e);
@@ -143,7 +137,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
           [APP_FETCH_URL]: `${BASE_URL}${FETCH_SESSION_URL}/${sessionId}`,
           [APP_PART_TYPE]: FETCHING_SESSION,
         });
-        const rawSession = sessionData?.[APP_FETCH_RESULT]?.data as unknown;
+        const rawSession = sessionData?.[APP_FETCH_RESULT] as unknown;
         const reprocessedSession = transformSession(rawSession as Session);
         dispatch({
           type: SET_SESSION,
@@ -162,7 +156,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
         [APP_FETCH_URL]: `${BASE_URL}${CONTEXT_URL}`,
         [APP_PART_TYPE]: PLATFORM_CONTEXT,
       });
-      const rawContext = contextData?.[APP_FETCH_RESULT]?.data as unknown;
+      const rawContext = contextData?.[APP_FETCH_RESULT] as unknown;
       dispatch({
         type: SET_CONTEXT,
         payload: rawContext as Context,
@@ -178,7 +172,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
         [APP_FETCH_URL]: `${BASE_URL}${IMAGE_URL}`,
         [APP_PART_TYPE]: AVAILABLE_IMAGES,
       });
-      const rawImages = imagesData?.[APP_FETCH_RESULT]?.data as unknown;
+      const rawImages = imagesData?.[APP_FETCH_RESULT] as unknown;
       const imagesByType = getImagesByType(rawImages as Image[]);
 
       dispatch({
@@ -215,7 +209,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
           [APP_PART_TYPE]: CREATE_SESSION,
         });
         if (sessionData) {
-          fetchRunningSessions();
+          await fetchRunningSessions();
         }
       } catch (e) {
         console.error('Fetch create session failed:', e);
