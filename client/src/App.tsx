@@ -11,6 +11,8 @@ import Row from 'react-bootstrap/Row';
 import Tooltip from 'react-bootstrap/Tooltip';
 import Alert from 'react-bootstrap/Alert';
 import Card from 'react-bootstrap/Card';
+import Tab from 'react-bootstrap/Tab';
+import Tabs from 'react-bootstrap/Tabs';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRefresh } from '@fortawesome/free-solid-svg-icons/faRefresh';
 
@@ -282,8 +284,21 @@ const App = (props: AppProps) => {
                       ))}
                     </Col>
                   </Row>
-
-                  <SciencePortalForm />
+                  <Tabs
+                    defaultActiveKey="profile"
+                    id="uncontrolled-tab-example"
+                    className="mb-3"
+                  >
+                    <Tab eventKey="home" title="Home">
+                      <SciencePortalForm />
+                    </Tab>
+                    <Tab eventKey="profile" title="Profile">
+                      Tab content for Profile
+                    </Tab>
+                    <Tab eventKey="contact" title="Contact" disabled>
+                      Tab content for Contact
+                    </Tab>
+                  </Tabs>
                 </Card.Body>
               </Card>
             </Col>

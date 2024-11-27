@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import { resolve } from 'path';
 import react from '@vitejs/plugin-react';
 import type { UserConfig } from 'vite';
+import fs from 'node:fs';
 
 export default defineConfig(
   ({ command }) =>
@@ -9,6 +10,10 @@ export default defineConfig(
       plugins: [react()],
       base: 'science-portal',
       server: {
+        https: {
+          key: fs.readFileSync('./certs/localhost-key.pem'),
+          cert: fs.readFileSync('./certs/localhost.pem'),
+        },
         port: 5173,
         proxy: {
           '^/science-portal/userinfo': {
@@ -42,7 +47,7 @@ export default defineConfig(
                 authUrl.searchParams.set('response_type', 'code');
                 authUrl.searchParams.set(
                   'redirect_uri',
-                  'http://localhost:5173/science-portal/oidc-callback',
+                  'https://localhost:5173/science-portal/oidc-callback', // Note: HTTPS
                 );
                 authUrl.searchParams.set(
                   'client_id',
@@ -61,24 +66,33 @@ export default defineConfig(
             },
           },
           '/science-portal/oidc-callback': {
-            // Moved inside proxy object
             target: 'https://haproxy.cadc.dao.nrc.ca',
             changeOrigin: true,
             secure: false,
             configure: (proxy, options) => {
               proxy.on('proxyRes', function (proxyRes, req, res) {
-                // Remove CORS headers from upstream
-                delete proxyRes.headers['access-control-allow-origin'];
+                if (
+                  proxyRes.headers.location?.includes('haproxy.cadc.dao.nrc.ca')
+                ) {
+                  const newLocation = proxyRes.headers.location.replace(
+                    'https://haproxy.cadc.dao.nrc.ca/science-portal',
+                    'https://localhost:5173/science-portal', // Note: HTTPS
+                  );
+                  proxyRes.headers.location = newLocation;
+                }
 
-                // Preserve cookies
                 if (proxyRes.headers['set-cookie']) {
-                  const cookies = proxyRes.headers['set-cookie'].map((cookie) =>
-                    cookie.replace(/Domain=[^;]+/, 'Domain=localhost'),
+                  const cookies = proxyRes.headers['set-cookie'].map(
+                    (cookie) => {
+                      if (cookie.startsWith('__Host-')) {
+                        return cookie; // Keep Host-prefixed cookies intact
+                      }
+                      return cookie.replace(/Domain=[^;]+/, 'Domain=localhost');
+                    },
                   );
                   proxyRes.headers['set-cookie'] = cookies;
                 }
 
-                // Copy all response headers
                 Object.keys(proxyRes.headers).forEach((key) => {
                   res.setHeader(key, proxyRes.headers[key]);
                 });
@@ -86,8 +100,7 @@ export default defineConfig(
             },
           },
         },
-      },
-      // Rest of your config remains the same
+      }, // Rest of your config remains the same
       build: {
         outDir: resolve(__dirname, '../src/main/webapp/dist'),
         emptyOutDir: true,
