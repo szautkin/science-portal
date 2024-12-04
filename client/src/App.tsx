@@ -65,6 +65,7 @@ import { AppProps } from './main';
 import { AppTheme } from './context/app/types';
 import SRCNavbar from './components/src/SRCNavbar';
 import SRCLoginModal from './components/src/SRCLoginModal';
+import SciencePortalPrivateForm from './components/SciencePortalPrivateForm';
 
 const App = (props: AppProps) => {
   const { state: authState, getUser } = useAuth();
@@ -285,19 +286,24 @@ const App = (props: AppProps) => {
                     </Col>
                   </Row>
                   <Tabs
-                    defaultActiveKey="profile"
+                    defaultActiveKey={props.initialData.tabLabels?.[0].toLowerCase()}
                     id="uncontrolled-tab-example"
                     className="mb-3"
                   >
-                    <Tab eventKey="home" title="Home">
-                      <SciencePortalForm />
-                    </Tab>
-                    <Tab eventKey="profile" title="Profile">
-                      Tab content for Profile
-                    </Tab>
-                    <Tab eventKey="contact" title="Contact" disabled>
-                      Tab content for Contact
-                    </Tab>
+                    {props.initialData.tabLabels.map((tabName) => {
+                      let tabContent = null;
+                      if (tabName === 'Standard') {
+                        tabContent = <SciencePortalForm />;
+                      }
+                      if (tabName === 'Advanced') {
+                        tabContent = <SciencePortalPrivateForm />;
+                      }
+                      return (
+                        <Tab eventKey={tabName.toLowerCase()} title={tabName}>
+                          {tabContent}
+                        </Tab>
+                      );
+                    })}
                   </Tabs>
                 </Card.Body>
               </Card>

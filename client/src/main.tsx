@@ -80,7 +80,7 @@ if (isDev) {
         sessionsResourceID: 'dev-resource-id',
         sessionsStandardID: 'dev-standard-id',
         themeName: 'src',
-        tabLabels: ['Tab 1', 'Tab 2'],
+        tabLabels: ['Standard', 'Advanced'],
         bannerText: 'Development Mode',
         contentBase: '/dist',
         headerURLs: {},

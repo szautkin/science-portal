@@ -1,5 +1,23 @@
 # React + TypeScript + Vite
 
+## Pre-requisites
+- install mkcert using brew 
+```bash 
+brew install mkcert
+mkcert -install #local CA
+mkdir certs
+cd certs
+mkcert localhost #certs for local development
+```
+- change redirectURI for JavaEE helm values for science-portal
+```yaml
+redirectURI: "https://localhost:5173/science-portal/oidc-callback" 
+```
+- re-start pods with current science-platform back-end
+- run vite dev 
+```bash
+npm run dev 
+```
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:
