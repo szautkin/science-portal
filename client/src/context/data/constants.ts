@@ -91,6 +91,9 @@ export const PROP_DEFAULT_RAM_HEADLESS = 'defaultRAMHeadless';
 export const PROP_AVAILABLE_RAM = 'availableRAM';
 export const PROP_AVAILABLE_GPUS = 'availableGPUs';
 
+// PRIVATE_INFO_PROPS
+export const PROP_REPOSITORIES = 'repositories';
+
 // UI constants
 export const PROP_LOGO = 'logo';
 export const SP_IMAGE_URL = '/science-portal/images/';

@@ -66,6 +66,7 @@ import { AppTheme } from './context/app/types';
 import SRCNavbar from './components/src/SRCNavbar';
 import SRCLoginModal from './components/src/SRCLoginModal';
 import SciencePortalPrivateForm from './components/SciencePortalPrivateForm';
+import NewSessionCustomImageForm from './components/forms/NewSessionCustomImageForm';
 
 const App = (props: AppProps) => {
   const { state: authState, getUser } = useAuth();
@@ -298,10 +299,14 @@ const App = (props: AppProps) => {
                         tabContent = <SciencePortalForm />;
                       }
                       if (tabName === 'Advanced') {
-                        tabContent = <SciencePortalPrivateForm />;
+                        tabContent = <NewSessionCustomImageForm />;
                       }
                       return (
-                        <Tab eventKey={tabName.toLowerCase()} title={tabName}>
+                        <Tab
+                          key={tabName}
+                          eventKey={tabName.toLowerCase()}
+                          title={tabName}
+                        >
                           {tabContent}
                         </Tab>
                       );

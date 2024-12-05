@@ -80,6 +80,7 @@ import {
   CLEAR_DATA,
   SET_REPO,
   DATA_PRIVATE_INFO,
+  PROP_REPOSITORIES,
 } from './constants';
 
 // State interface
@@ -167,7 +168,7 @@ export interface Context {
 }
 
 export interface Repo {
-  repositories: string[];
+  [PROP_REPOSITORIES]: string[];
 }
 
 export interface StandardSession {

@@ -29,6 +29,11 @@ const TARGET_PROXY = {
       changeOrigin: true,
       secure: false,
     },
+    '^/science-portal/repository': {
+      target: 'https://haproxy.cadc.dao.nrc.ca',
+      changeOrigin: true,
+      secure: false,
+    },
     '/science-portal/oidc-login': {
       target: 'https://ska-iam.stfc.ac.uk/authorize',
       changeOrigin: true,

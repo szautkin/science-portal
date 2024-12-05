@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
@@ -11,12 +11,18 @@ import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 import {
   DEFAULT_CORES_NUMBER,
   DEFAULT_RAM_NUMBER,
-} from './utilities/constants';
-import { useData } from '../context/data/useData';
+} from '../utilities/constants';
+import { useData } from '../../context/data/useData';
 import {
   DATA_PRIVATE_INFO,
   PROP_REPOSITORIES,
-} from '../context/data/constants';
+} from '../../context/data/constants';
+import { useAuth } from '../../context/auth/useAuth';
+import {
+  IS_AUTHENTICATED,
+  USER,
+  USER_NAME,
+} from '../../context/auth/constants';
 
 interface FormData {
   sessionName: string;
@@ -39,16 +45,9 @@ interface FormData {
   resetHandler: () => void;
 }
 
-interface SciencePortalPrivateFormProps {
-  fData: FormData;
-  authenticatedUsername?: string;
-}
-
-const SciencePortalPrivateForm: React.FC<SciencePortalPrivateFormProps> = ({
-  fData,
-  authenticatedUsername,
-}) => {
+const NewSessionCustomImageForm = () => {
   const { state } = useData();
+  const { state: authState } = useAuth();
   console.log('state data', state);
   const initialRAM = state?.context
     ? Math.max(state?.context.defaultRAM, DEFAULT_RAM_NUMBER)
@@ -58,10 +57,11 @@ const SciencePortalPrivateForm: React.FC<SciencePortalPrivateFormProps> = ({
     ? Math.max(state?.context.defaultCores, DEFAULT_CORES_NUMBER)
     : DEFAULT_CORES_NUMBER;
 
-  const initialUsername =
-    authenticatedUsername && authenticatedUsername !== 'Login'
-      ? authenticatedUsername
-      : '';
+  const initialUsername = authState?.[IS_AUTHENTICATED]
+    ? authState?.[USER]?.[USER_NAME]
+    : '';
+
+  let fData;
 
   const repositoryHosts = state?.[DATA_PRIVATE_INFO]?.[PROP_REPOSITORIES];
 
@@ -445,4 +445,4 @@ const SciencePortalPrivateForm: React.FC<SciencePortalPrivateFormProps> = ({
   );
 };
 
-export default SciencePortalPrivateForm;
+export default NewSessionCustomImageForm;

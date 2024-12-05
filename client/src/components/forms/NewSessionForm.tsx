@@ -13,7 +13,8 @@ import {
   DATA_CONTEXT,
   DATA_IMAGES,
   DATA_SESSIONS,
-  DESKTOP, NEW_SESSION_INITIAL_VALUES,
+  DESKTOP,
+  NEW_SESSION_INITIAL_VALUES,
   PROP_AVAILABLE_CORES,
   PROP_AVAILABLE_RAM,
   PROP_SESSION_CORES,
@@ -121,8 +122,8 @@ const NewSessionForm: React.FC = () => {
           <BootstrapForm onSubmit={handleSubmit}>
             <Field name={VAL_TYPE}>
               {({ input, meta }) => (
-                <BootstrapForm.Group className="mb-3">
-                  <BootstrapForm.Label>
+                <BootstrapForm.Group as={Row} className="mb-3">
+                  <BootstrapForm.Label column="sm" sm="4" className="text-end">
                     Type
                     <FormPopover
                       headerText={'Session Type'}
@@ -131,21 +132,23 @@ const NewSessionForm: React.FC = () => {
                       }
                     />
                   </BootstrapForm.Label>
-                  {hasImages ? (
-                    <BootstrapForm.Select
-                      {...input}
-                      isInvalid={meta.touched && meta.error}
-                    >
-                      <option value="">Select a type</option>
-                      {availableTypes.map((pType) => (
-                        <option key={pType} value={pType}>
-                          {pType}
-                        </option>
-                      ))}
-                    </BootstrapForm.Select>
-                  ) : (
-                    <FieldPlaceholder />
-                  )}
+                  <Col sm={7}>
+                    {hasImages ? (
+                      <BootstrapForm.Select
+                        {...input}
+                        isInvalid={meta.touched && meta.error}
+                      >
+                        <option value="">Select a type</option>
+                        {availableTypes.map((pType) => (
+                          <option key={pType} value={pType}>
+                            {pType}
+                          </option>
+                        ))}
+                      </BootstrapForm.Select>
+                    ) : (
+                      <FieldPlaceholder />
+                    )}
+                  </Col>
                   <BootstrapForm.Control.Feedback type="invalid">
                     {meta.error}
                   </BootstrapForm.Control.Feedback>
@@ -154,31 +157,33 @@ const NewSessionForm: React.FC = () => {
             </Field>
             <Field name={VAL_PROJECT}>
               {({ input, meta }) => (
-                <BootstrapForm.Group className="mb-3">
-                  <BootstrapForm.Label>
+                <BootstrapForm.Group as={Row} className="mb-3">
+                  <BootstrapForm.Label column="sm" sm="4" className="text-end">
                     Project
                     <FormPopover
                       headerText={'Project'}
                       bodyText={'The project within which an image created'}
                     />
                   </BootstrapForm.Label>
-                  {hasImages ? (
-                    <BootstrapForm.Select
-                      {...input}
-                      isInvalid={meta.touched && meta.error}
-                    >
-                      <option value="">Select a project</option>
-                      {Object.keys(
-                        state?.[DATA_IMAGES]?.[values[VAL_TYPE]] ?? {},
-                      ).map((prj) => (
-                        <option key={prj} value={prj}>
-                          {prj}
-                        </option>
-                      ))}
-                    </BootstrapForm.Select>
-                  ) : (
-                    <FieldPlaceholder />
-                  )}
+                  <Col sm={7}>
+                    {hasImages ? (
+                      <BootstrapForm.Select
+                        {...input}
+                        isInvalid={meta.touched && meta.error}
+                      >
+                        <option value="">Select a project</option>
+                        {Object.keys(
+                          state?.[DATA_IMAGES]?.[values[VAL_TYPE]] ?? {},
+                        ).map((prj) => (
+                          <option key={prj} value={prj}>
+                            {prj}
+                          </option>
+                        ))}
+                      </BootstrapForm.Select>
+                    ) : (
+                      <FieldPlaceholder />
+                    )}
+                  </Col>
                   <BootstrapForm.Control.Feedback type="invalid">
                     {meta.error}
                   </BootstrapForm.Control.Feedback>
@@ -187,35 +192,37 @@ const NewSessionForm: React.FC = () => {
             </Field>
             <Field name={VAL_IMAGE}>
               {({ input, meta }) => (
-                <BootstrapForm.Group className="mb-3">
-                  <BootstrapForm.Label>
+                <BootstrapForm.Group as={Row} className="mb-3">
+                  <BootstrapForm.Label column="sm" sm="4" className="text-end">
                     Image
                     <FormPopover
                       headerText={'Container Image'}
                       bodyText={'The Docker image for the session.'}
                     />
                   </BootstrapForm.Label>
-                  {hasImages ? (
-                    <BootstrapForm.Select
-                      {...input}
-                      isInvalid={meta.touched && meta.error}
-                    >
-                      <option value="">Select an image</option>
-                      {getImagesNamesSorted(
-                        Object.values(
-                          state?.[DATA_IMAGES]?.[values[VAL_TYPE]]?.[
-                            values[VAL_PROJECT]
-                          ] ?? {},
-                        ),
-                      ).map((image: ImageEx) => (
-                        <option key={image.id} value={image.id}>
-                          {image.imageName}
-                        </option>
-                      ))}
-                    </BootstrapForm.Select>
-                  ) : (
-                    <FieldPlaceholder />
-                  )}
+                  <Col sm={7}>
+                    {hasImages ? (
+                      <BootstrapForm.Select
+                        {...input}
+                        isInvalid={meta.touched && meta.error}
+                      >
+                        <option value="">Select an image</option>
+                        {getImagesNamesSorted(
+                          Object.values(
+                            state?.[DATA_IMAGES]?.[values[VAL_TYPE]]?.[
+                              values[VAL_PROJECT]
+                            ] ?? {},
+                          ),
+                        ).map((image: ImageEx) => (
+                          <option key={image.id} value={image.id}>
+                            {image.imageName}
+                          </option>
+                        ))}
+                      </BootstrapForm.Select>
+                    ) : (
+                      <FieldPlaceholder />
+                    )}
+                  </Col>
                   <BootstrapForm.Control.Feedback type="invalid">
                     {meta.error}
                   </BootstrapForm.Control.Feedback>
@@ -229,8 +236,8 @@ const NewSessionForm: React.FC = () => {
               }
             >
               {({ input, meta }) => (
-                <BootstrapForm.Group className="mb-3">
-                  <BootstrapForm.Label>
+                <BootstrapForm.Group as={Row} className="mb-3">
+                  <BootstrapForm.Label column="sm" sm="4" className="text-end">
                     Name
                     <FormPopover
                       headerText={'Session Name'}
@@ -239,16 +246,18 @@ const NewSessionForm: React.FC = () => {
                       }
                     />
                   </BootstrapForm.Label>
-                  {hasImages ? (
-                    <BootstrapForm.Control
-                      {...input}
-                      type="text"
-                      placeholder="Instance name"
-                      isInvalid={meta.touched && meta.error}
-                    />
-                  ) : (
-                    <FieldPlaceholder />
-                  )}
+                  <Col sm={7}>
+                    {hasImages ? (
+                      <BootstrapForm.Control
+                        {...input}
+                        type="text"
+                        placeholder="Instance name"
+                        isInvalid={meta.touched && meta.error}
+                      />
+                    ) : (
+                      <FieldPlaceholder />
+                    )}
+                  </Col>
                   <BootstrapForm.Control.Feedback type="invalid">
                     {meta.error}
                   </BootstrapForm.Control.Feedback>
@@ -258,31 +267,37 @@ const NewSessionForm: React.FC = () => {
             {values?.[VAL_TYPE] !== DESKTOP && (
               <Field name={VAL_MEMORY}>
                 {({ input, meta }) => (
-                  <BootstrapForm.Group className="mb-3">
-                    <BootstrapForm.Label>
+                  <BootstrapForm.Group as={Row} className="mb-3">
+                    <BootstrapForm.Label
+                      column="sm"
+                      sm="4"
+                      className="text-end"
+                    >
                       Memory
                       <FormPopover
                         headerText={'Memory'}
                         bodyText={'System memory (RAM) in gigabytes.'}
                       />
                     </BootstrapForm.Label>
-                    {hasImages ? (
-                      <BootstrapForm.Select
-                        {...input}
-                        isInvalid={meta.touched && meta.error}
-                      >
-                        <option value="">Select instance RAM</option>
-                        {state?.[DATA_CONTEXT]?.[PROP_AVAILABLE_RAM]?.map(
-                          (mem) => (
-                            <option key={mem} value={mem}>
-                              {mem}
-                            </option>
-                          ),
-                        )}
-                      </BootstrapForm.Select>
-                    ) : (
-                      <FieldPlaceholder />
-                    )}
+                    <Col sm={7}>
+                      {hasImages ? (
+                        <BootstrapForm.Select
+                          {...input}
+                          isInvalid={meta.touched && meta.error}
+                        >
+                          <option value="">Select instance RAM</option>
+                          {state?.[DATA_CONTEXT]?.[PROP_AVAILABLE_RAM]?.map(
+                            (mem) => (
+                              <option key={mem} value={mem}>
+                                {mem}
+                              </option>
+                            ),
+                          )}
+                        </BootstrapForm.Select>
+                      ) : (
+                        <FieldPlaceholder />
+                      )}
+                    </Col>
                     <BootstrapForm.Control.Feedback type="invalid">
                       {meta.error}
                     </BootstrapForm.Control.Feedback>
@@ -293,8 +308,12 @@ const NewSessionForm: React.FC = () => {
             {values?.[VAL_TYPE] !== DESKTOP && (
               <Field name={VAL_CORES}>
                 {({ input, meta }) => (
-                  <BootstrapForm.Group className="mb-3">
-                    <BootstrapForm.Label>
+                  <BootstrapForm.Group as={Row} className="mb-3">
+                    <BootstrapForm.Label
+                      column="sm"
+                      sm="4"
+                      className="text-end"
+                    >
                       # CPU Cores
                       <FormPopover
                         headerText={'# of Cores'}
@@ -303,25 +322,27 @@ const NewSessionForm: React.FC = () => {
                         }
                       />
                     </BootstrapForm.Label>
-                    {hasImages ? (
-                      <BootstrapForm.Select
-                        {...input}
-                        isInvalid={meta.touched && meta.error}
-                      >
-                        <option value="">
-                          Select instance number of cores
-                        </option>
-                        {state?.[DATA_CONTEXT]?.[PROP_AVAILABLE_CORES]?.map(
-                          (core) => (
-                            <option key={core} value={core}>
-                              {core}
-                            </option>
-                          ),
-                        )}
-                      </BootstrapForm.Select>
-                    ) : (
-                      <FieldPlaceholder />
-                    )}
+                    <Col sm={7}>
+                      {hasImages ? (
+                        <BootstrapForm.Select
+                          {...input}
+                          isInvalid={meta.touched && meta.error}
+                        >
+                          <option value="">
+                            Select instance number of cores
+                          </option>
+                          {state?.[DATA_CONTEXT]?.[PROP_AVAILABLE_CORES]?.map(
+                            (core) => (
+                              <option key={core} value={core}>
+                                {core}
+                              </option>
+                            ),
+                          )}
+                        </BootstrapForm.Select>
+                      ) : (
+                        <FieldPlaceholder />
+                      )}
+                    </Col>
                     <BootstrapForm.Control.Feedback type="invalid">
                       {meta.error}
                     </BootstrapForm.Control.Feedback>
@@ -330,13 +351,15 @@ const NewSessionForm: React.FC = () => {
               </Field>
             )}
             <Row className="mt-3">
-              <Col xs={12} sm={6} className="mb-2 mb-sm-0">
+              <Col sm={4}> </Col>
+              <Col sm={7}>
                 {hasImages ? (
                   <Button
                     variant="primary"
                     type="submit"
                     disabled={submitting || !hasImages}
-                    className="w-100"
+                    size="sm"
+                    className="m-1"
                   >
                     Launch
                   </Button>
@@ -348,15 +371,15 @@ const NewSessionForm: React.FC = () => {
                     animation="glow"
                   />
                 )}
-              </Col>
-              <Col xs={12} sm={6}>
+
                 {hasImages ? (
                   <Button
                     variant="secondary"
                     type="button"
                     onClick={() => form.reset()}
                     disabled={submitting || pristine || !hasImages}
-                    className="w-100"
+                    size="sm"
+                    className="m-1"
                   >
                     Reset
                   </Button>
