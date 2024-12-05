@@ -120,7 +120,7 @@ const TARGET_PROXY = {
   },
 };
 
-const CURRENT_DEV_MODE = DEV_MODE_LOCAL; //DEV_MODE_CLOUD;
+const CURRENT_DEV_MODE = DEV_MODE_CLOUD; //pick one DEV_MODE_LOCAL || DEV_MODE_CLOUD;
 
 export default defineConfig(
   ({ command }) =>

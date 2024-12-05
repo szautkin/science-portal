@@ -77,6 +77,7 @@ const App = (props: AppProps) => {
     fetchRunningSessions,
     fetchPlatformContext,
     fetchPlatformImages,
+    fetchPlatformRepos,
   } = useData();
 
   React.useEffect(() => {
@@ -108,6 +109,7 @@ const App = (props: AppProps) => {
       fetchRunningSessions();
       fetchPlatformContext();
       fetchPlatformImages();
+      fetchPlatformRepos();
     }
   }, [authState, authState?.[IS_AUTHENTICATED]]);
 

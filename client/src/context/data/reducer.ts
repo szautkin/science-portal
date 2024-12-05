@@ -9,6 +9,8 @@ import {
   SET_SESSION,
   SET_SESSIONS,
   SET_SESSIONS_STATS,
+  SET_REPO,
+  DATA_PRIVATE_INFO,
 } from './constants';
 import { DataAction, DataState } from './types';
 import { initialState } from './store';
@@ -40,6 +42,11 @@ export const dataReducer = (
       return {
         ...state,
         [DATA_CONTEXT]: action.payload,
+      };
+    case SET_REPO:
+      return {
+        ...state,
+        [DATA_PRIVATE_INFO]: action.payload,
       };
     case SET_SESSIONS_STATS:
       return {

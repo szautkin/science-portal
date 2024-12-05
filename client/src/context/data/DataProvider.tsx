@@ -22,10 +22,12 @@ import {
   PROP_SESSION_TYPE,
   RENEW_SESSION,
   RENEW_SESSION_URL,
+  REPOSITORY_URL,
   SESSION_URL,
   SESSION_VIEW_URL,
   SET_CONTEXT,
   SET_IMAGES,
+  SET_REPO,
   SET_SESSION,
   SET_SESSIONS,
   SET_SESSIONS_STATS,
@@ -184,6 +186,23 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [appFetch, authState]);
 
+  const fetchPlatformRepos = useCallback(async () => {
+    try {
+      const imagesData = await appFetch({
+        [APP_FETCH_URL]: `${BASE_URL}${REPOSITORY_URL}`,
+        [APP_PART_TYPE]: AVAILABLE_IMAGES,
+      });
+      const repoArray = imagesData?.[APP_FETCH_RESULT] as unknown;
+
+      dispatch({
+        type: SET_REPO,
+        payload: { repositories: repoArray as string[] },
+      });
+    } catch (e) {
+      console.error('Fetch repos failed:', e);
+    }
+  }, [appFetch, authState]);
+
   const fetchCreateSession = useCallback(
     async (sessionPayload: NewSession) => {
       const submitPayload: NewSession = {
@@ -236,6 +255,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
         fetchStatsData,
         fetchPlatformContext,
         fetchPlatformImages,
+        fetchPlatformRepos,
         clearData,
       }}
     >

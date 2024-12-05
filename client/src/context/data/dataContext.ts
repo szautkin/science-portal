@@ -15,6 +15,7 @@ export const DataContext = createContext<
       fetchStatsData: () => void;
       fetchPlatformContext: () => void;
       fetchPlatformImages: () => void;
+      fetchPlatformRepos: () => void;
       clearData: () => void;
     }
   | undefined

@@ -14,6 +14,7 @@ export const DELETE_SESSION_URL = '/delete_session';
 export const CREATE_SESSION_URL = '/create_session';
 export const SESSION_VIEW_URL = '/session_view';
 export const CONTEXT_URL = '/context';
+export const REPOSITORY_URL = '/repository';
 
 // Actions
 const prefix = '@DATA';
@@ -22,12 +23,14 @@ export const SET_SESSIONS = `${prefix}/SET_SESSIONS`;
 export const SET_SESSION = `${prefix}/SET_SESSION`;
 export const SET_SESSIONS_STATS = `${prefix}/SET_SESSIONS_STATS`;
 export const SET_CONTEXT = `${prefix}/SET_CONTEXT`;
+export const SET_REPO = `${prefix}/SET_REPO`;
 export const CLEAR_DATA = `${prefix}/CLEAR_DATA`;
 
 // State
 export const DATA_IMAGES = 'images';
 export const DATA_SESSIONS = 'sessions';
 export const DATA_CONTEXT = 'context';
+export const DATA_PRIVATE_INFO = 'privateInfo';
 export const DATA_USAGE = 'usage';
 
 export const SESSION_STATS = 'session_stats';

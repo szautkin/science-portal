@@ -78,6 +78,8 @@ import {
   VAL_PROJECT,
   VAL_TYPE,
   CLEAR_DATA,
+  SET_REPO,
+  DATA_PRIVATE_INFO,
 } from './constants';
 
 // State interface
@@ -86,6 +88,7 @@ export interface DataState {
   [DATA_SESSIONS]: { [key: string]: Session };
   [DATA_CONTEXT]: Context | null;
   [DATA_USAGE]: PlatformUsage | null;
+  [DATA_PRIVATE_INFO]: Repo | null;
 }
 export type FormKeys =
   | typeof VAL_TYPE
@@ -163,6 +166,10 @@ export interface Context {
   [PROP_AVAILABLE_GPUS]: number[];
 }
 
+export interface Repo {
+  repositories: string[];
+}
+
 export interface StandardSession {
   [PROP_SESSION_TYPE]: ImageType;
   [PROP_SESSION_NAME]: string;
@@ -234,6 +241,7 @@ export interface PlatformUsage {
 // Action types
 export type DataAction =
   | { type: typeof SET_CONTEXT; payload: Context }
+  | { type: typeof SET_REPO; payload: Repo }
   | { type: typeof SET_SESSIONS_STATS; payload: PlatformUsage }
   | {
       type: typeof SET_SESSIONS;
