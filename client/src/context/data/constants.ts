@@ -46,7 +46,9 @@ export const CREATE_SESSION = 'create_session';
 export const PROP_IMAGE_ID = 'id';
 export const PROP_DIGEST = 'digest';
 export const PROP_TYPES = 'types';
-export const IMAGE_NAME = 'imageName';
+// Sorted Images
+export const PROP_VERSION = 'version';
+export const PROP_IMAGE_NAME = 'imageName';
 
 // Image types
 export const HEADLESS = 'headless';
@@ -79,16 +81,18 @@ export const PROP_CPU_CORES_IN_USE = 'cpuCoresInUse';
 export const PROP_GPU_UTILIZATION = 'gpuUtilization';
 
 // Context PROPS
-export const PROP_DEFAULT_REQUEST_CORES = 'defaultRequestCores';
-export const PROP_DEFAULT_LIMIT_CORES = 'defaultLimitCores';
-export const PROP_DEFAULT_CORES = 'defaultCores';
-export const PROP_DEFAULT_CORES_HEADLESS = 'defaultCoresHeadless';
+export const PROP_DEFAULT_REQUEST_CORES = 'defaultRequest';
+export const PROP_DEFAULT_LIMIT_CORES = 'defaultLimit';
+export const PROP_DEFAULT_CORES = 'default';
+export const PROP_DEFAULT_CORES_HEADLESS = 'defaultHeadless';
 export const PROP_AVAILABLE_CORES = 'availableCores';
-export const PROP_DEFAULT_REQUEST_RAM = 'defaultRequestRAM';
-export const PROP_DEFAULT_LIMIT_RAM = 'defaultLimitRAM';
-export const PROP_DEFAULT_RAM = 'defaultRAM';
-export const PROP_DEFAULT_RAM_HEADLESS = 'defaultRAMHeadless';
-export const PROP_AVAILABLE_RAM = 'availableRAM';
+export const PROP_DEFAULT_REQUEST_RAM = 'defaultRequest';
+export const PROP_DEFAULT_LIMIT_RAM = 'defaultLimit';
+export const PROP_DEFAULT_RAM = 'default';
+export const PROP_DEFAULT_RAM_HEADLESS = 'defaultHeadless';
+export const PROP_MEMORY = 'memoryGB';
+export const PROP_CORES = 'cores';
+export const PROP_AVVAILABLE_RAM = 'availableRAM';
 export const PROP_AVAILABLE_GPUS = 'availableGPUs';
 
 // PRIVATE_INFO_PROPS
@@ -98,6 +102,7 @@ export const PROP_REPOSITORIES = 'repositories';
 export const PROP_LOGO = 'logo';
 export const SP_IMAGE_URL = '/science-portal/images/';
 export const DEFAULT_LOGO = 'fas_cube.png';
+export const OPTIONS = 'options';
 
 // Form
 // Constants

@@ -8,15 +8,17 @@ import {
   Placeholder,
 } from 'react-bootstrap';
 
-import { getImagesNamesSorted } from '../../utilities/images';
 import {
   DATA_CONTEXT,
   DATA_IMAGES,
   DATA_SESSIONS,
   DESKTOP,
   NEW_SESSION_INITIAL_VALUES,
+  OPTIONS,
   PROP_AVAILABLE_CORES,
   PROP_AVAILABLE_RAM,
+  PROP_CORES,
+  PROP_MEMORY,
   PROP_SESSION_CORES,
   PROP_SESSION_IMAGE,
   PROP_SESSION_NAME,
@@ -41,8 +43,16 @@ import {
   FormValues,
   ImageEx,
   NewSession,
+  SortedImage,
 } from '../../context/data/types';
 import { useData } from '../../context/data/useData';
+import labels from './labels.json';
+import {
+  getImagesNamesSorted,
+  getProjectImagesMap,
+  getProjectNames,
+} from '../utilities/utils';
+import { DEFAULT_IMAGE_NAMES, SKAHA_PROJECT } from '../utilities/constants';
 
 const NewSessionForm: React.FC = () => {
   //const { state, dispatch } = useAuth();
@@ -118,13 +128,33 @@ const NewSessionForm: React.FC = () => {
       validate={validate}
       initialValues={NEW_SESSION_INITIAL_VALUES}
       render={({ handleSubmit, form, submitting, pristine, values }) => {
+        const images = state[DATA_IMAGES];
+        const projectsOfType = images?.[values[VAL_TYPE]];
+        const availableProjects = getProjectNames(projectsOfType) || [];
+        const defaultImages = projectsOfType?.[SKAHA_PROJECT] || [];
+        const imagesOfProject = getImagesNamesSorted(
+          projectsOfType ? projectsOfType[values[VAL_PROJECT]] : defaultImages,
+        );
+        const defaultImageName =
+          DEFAULT_IMAGE_NAMES[values?.[VAL_TYPE]] || undefined;
+        const defaultImageId = defaultImageName
+          ? imagesOfProject.find((mObj) => mObj.name === defaultImageName)?.id
+          : imagesOfProject[0]?.id;
+        console.log('form values', values);
+        console.log('form imagesOfProject', imagesOfProject);
+        console.log('form defaultImageName', defaultImageName);
+        console.log('form defaultImageId', defaultImageId);
         return (
           <BootstrapForm onSubmit={handleSubmit}>
             <Field name={VAL_TYPE}>
               {({ input, meta }) => (
                 <BootstrapForm.Group as={Row} className="mb-3">
-                  <BootstrapForm.Label column="sm" sm="4" className="text-end">
-                    Type
+                  <BootstrapForm.Label
+                    column="sm"
+                    sm="4"
+                    className="text-end fw-bold"
+                  >
+                    {labels.form.type}
                     <FormPopover
                       headerText={'Session Type'}
                       bodyText={
@@ -158,8 +188,12 @@ const NewSessionForm: React.FC = () => {
             <Field name={VAL_PROJECT}>
               {({ input, meta }) => (
                 <BootstrapForm.Group as={Row} className="mb-3">
-                  <BootstrapForm.Label column="sm" sm="4" className="text-end">
-                    Project
+                  <BootstrapForm.Label
+                    column="sm"
+                    sm="4"
+                    className="text-end fw-bold"
+                  >
+                    {labels.form.project}
                     <FormPopover
                       headerText={'Project'}
                       bodyText={'The project within which an image created'}
@@ -172,9 +206,7 @@ const NewSessionForm: React.FC = () => {
                         isInvalid={meta.touched && meta.error}
                       >
                         <option value="">Select a project</option>
-                        {Object.keys(
-                          state?.[DATA_IMAGES]?.[values[VAL_TYPE]] ?? {},
-                        ).map((prj) => (
+                        {availableProjects.map((prj) => (
                           <option key={prj} value={prj}>
                             {prj}
                           </option>
@@ -193,8 +225,12 @@ const NewSessionForm: React.FC = () => {
             <Field name={VAL_IMAGE}>
               {({ input, meta }) => (
                 <BootstrapForm.Group as={Row} className="mb-3">
-                  <BootstrapForm.Label column="sm" sm="4" className="text-end">
-                    Image
+                  <BootstrapForm.Label
+                    column="sm"
+                    sm="4"
+                    className="text-end fw-bold"
+                  >
+                    {labels.form.container_image}
                     <FormPopover
                       headerText={'Container Image'}
                       bodyText={'The Docker image for the session.'}
@@ -204,18 +240,13 @@ const NewSessionForm: React.FC = () => {
                     {hasImages ? (
                       <BootstrapForm.Select
                         {...input}
+                        value={input.value || defaultImageId}
                         isInvalid={meta.touched && meta.error}
                       >
                         <option value="">Select an image</option>
-                        {getImagesNamesSorted(
-                          Object.values(
-                            state?.[DATA_IMAGES]?.[values[VAL_TYPE]]?.[
-                              values[VAL_PROJECT]
-                            ] ?? {},
-                          ),
-                        ).map((image: ImageEx) => (
+                        {imagesOfProject.map((image: SortedImage) => (
                           <option key={image.id} value={image.id}>
-                            {image.imageName}
+                            {image.name}
                           </option>
                         ))}
                       </BootstrapForm.Select>
@@ -237,8 +268,12 @@ const NewSessionForm: React.FC = () => {
             >
               {({ input, meta }) => (
                 <BootstrapForm.Group as={Row} className="mb-3">
-                  <BootstrapForm.Label column="sm" sm="4" className="text-end">
-                    Name
+                  <BootstrapForm.Label
+                    column="sm"
+                    sm="4"
+                    className="text-end fw-bold"
+                  >
+                    {labels.form.session_name}
                     <FormPopover
                       headerText={'Session Name'}
                       bodyText={
@@ -271,9 +306,9 @@ const NewSessionForm: React.FC = () => {
                     <BootstrapForm.Label
                       column="sm"
                       sm="4"
-                      className="text-end"
+                      className="text-end fw-bold"
                     >
-                      Memory
+                      {labels.form.memory}
                       <FormPopover
                         headerText={'Memory'}
                         bodyText={'System memory (RAM) in gigabytes.'}
@@ -286,7 +321,7 @@ const NewSessionForm: React.FC = () => {
                           isInvalid={meta.touched && meta.error}
                         >
                           <option value="">Select instance RAM</option>
-                          {state?.[DATA_CONTEXT]?.[PROP_AVAILABLE_RAM]?.map(
+                          {state?.[DATA_CONTEXT]?.[PROP_MEMORY]?.[OPTIONS]?.map(
                             (mem) => (
                               <option key={mem} value={mem}>
                                 {mem}
@@ -312,9 +347,9 @@ const NewSessionForm: React.FC = () => {
                     <BootstrapForm.Label
                       column="sm"
                       sm="4"
-                      className="text-end"
+                      className="text-end fw-bold"
                     >
-                      # CPU Cores
+                      {labels.form.cores}
                       <FormPopover
                         headerText={'# of Cores'}
                         bodyText={
@@ -331,7 +366,7 @@ const NewSessionForm: React.FC = () => {
                           <option value="">
                             Select instance number of cores
                           </option>
-                          {state?.[DATA_CONTEXT]?.[PROP_AVAILABLE_CORES]?.map(
+                          {state?.[DATA_CONTEXT]?.[PROP_CORES]?.[OPTIONS]?.map(
                             (core) => (
                               <option key={core} value={core}>
                                 {core}

@@ -81,7 +81,13 @@ import {
   SET_REPO,
   DATA_PRIVATE_INFO,
   PROP_REPOSITORIES,
+  PROP_CORES,
+  OPTIONS,
+  PROP_MEMORY,
+  PROP_VERSION,
+  PROP_IMAGE_NAME,
 } from './constants';
+import { DEFAULT_IMAGE_NAMES } from '../../components/utilities/constants';
 
 // State interface
 export interface DataState {
@@ -102,7 +108,7 @@ export type FormKeys =
 
 export interface FormValues {
   [VAL_PROJECT]: string;
-  [VAL_TYPE]: ImageType;
+  [VAL_TYPE]: keyof DEFAULT_IMAGE_NAMES;
   [VAL_IMAGE]: string;
   [VAL_INSTANCE_NAME]: string;
   [VAL_MEMORY]: number;
@@ -123,8 +129,38 @@ export interface Image {
   [PROP_DIGEST]: string;
   [PROP_TYPES]: ImageType[];
 }
+
+export interface SortedImage extends Image {
+  [PROP_IMAGE_NAME]: string;
+  [PROP_NAME]: string;
+  [PROP_VERSION]: string;
+}
+
+export interface KeyedImages {
+  [key: string]: Image[];
+}
+export interface KeyedSortedImages {
+  [key: string]: SortedImage[];
+}
+
 export interface ImageEx extends Image {
   [IMAGE_NAME]: string;
+}
+
+export interface KeyedImageType {
+  [HEADLESS]?: KeyedImages;
+  [DESKTOP_APP]?: KeyedImages;
+  [CARTA]?: KeyedImages;
+  [NOTEBOOK]?: KeyedImages;
+  [DESKTOP]?: KeyedImages;
+  [CONTRIBUTED]?: KeyedImages;
+}
+
+export interface KeyedImageName {
+  [CARTA]?: string;
+  [NOTEBOOK]?: string;
+  [DESKTOP]?: string;
+  [CONTRIBUTED]?: string;
 }
 
 export interface Session {
@@ -154,17 +190,20 @@ export interface Session {
 }
 
 export interface Context {
-  [PROP_DEFAULT_REQUEST_CORES]: number;
-  [PROP_DEFAULT_LIMIT_CORES]: number;
-  [PROP_DEFAULT_CORES]: number;
-  [PROP_DEFAULT_CORES_HEADLESS]: number;
-  [PROP_AVAILABLE_CORES]: number[];
-  [PROP_DEFAULT_REQUEST_RAM]: number;
-  [PROP_DEFAULT_LIMIT_RAM]: number;
-  [PROP_DEFAULT_RAM]: number;
-  [PROP_DEFAULT_RAM_HEADLESS]: number;
-  [PROP_AVAILABLE_RAM]: number[];
-  [PROP_AVAILABLE_GPUS]: number[];
+  [PROP_CORES]: {
+    [PROP_DEFAULT_CORES]: number;
+    [PROP_DEFAULT_LIMIT_CORES]: number;
+    [PROP_DEFAULT_REQUEST_CORES]: number;
+    [PROP_DEFAULT_CORES_HEADLESS]: number;
+    [OPTIONS]: number[];
+  };
+  [PROP_MEMORY]: {
+    [PROP_DEFAULT_RAM]: number;
+    [PROP_DEFAULT_RAM_HEADLESS]: number;
+    [OPTIONS]: number[];
+    [PROP_DEFAULT_REQUEST_RAM]: number;
+    [PROP_DEFAULT_LIMIT_RAM]: number;
+  };
 }
 
 export interface Repo {

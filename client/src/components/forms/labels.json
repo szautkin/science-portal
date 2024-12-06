@@ -1,0 +1,10 @@
+{
+  "form": {
+    "type": "type",
+    "project": "project",
+    "container_image": "container image",
+    "session_name": "session name",
+    "memory": "memory",
+    "cores": "# cores"
+  }
+}
