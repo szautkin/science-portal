@@ -5,8 +5,8 @@ export const fetchWithAuth = async (
   return await fetch(url, {
     ...options,
     headers: {
-      ...options.headers,
       'Content-Type': 'application/json',
+      ...options.headers,
     },
     credentials: 'include',
   });

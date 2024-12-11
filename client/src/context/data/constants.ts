@@ -1,5 +1,5 @@
 // APP constants
-import { FormValues } from './types';
+import { CustomFormValues, FormValues } from './types';
 
 export const BASE_HOST_URL = 'https://www.canfar.net';
 export const SCIENCE_PORTAL_URL = `${BASE_HOST_URL}/science-portal`;
@@ -9,9 +9,9 @@ export const BASE_URL = '/science-portal';
 export const IMAGE_URL = '/image';
 export const SESSION_URL = '/session';
 export const RENEW_SESSION_URL = '/renew_session';
-export const FETCH_SESSION_URL = '/fetch_session';
-export const DELETE_SESSION_URL = '/delete_session';
-export const CREATE_SESSION_URL = '/create_session';
+export const FETCH_SESSION_URL = '/session';
+export const DELETE_SESSION_URL = '/session';
+export const CREATE_SESSION_URL = '/session';
 export const SESSION_VIEW_URL = '/session_view';
 export const CONTEXT_URL = '/context';
 export const REPOSITORY_URL = '/repository';
@@ -109,6 +109,9 @@ export const OPTIONS = 'options';
 export const VAL_PROJECT = 'project';
 export const VAL_TYPE = 'type';
 export const VAL_IMAGE = 'image';
+export const VAL_REPO_USER_NAME = 'repositoryUsername';
+export const VAL_REPO_SECRET = 'repositorySecret';
+export const VAL_REPO_HOST = 'repositoryHost';
 export const VAL_INSTANCE_NAME = 'instanceName';
 export const VAL_MEMORY = 'memory';
 export const VAL_CORES = 'cores';
@@ -124,12 +127,26 @@ export const NEW_SESSION_INITIAL_VALUES: FormValues = {
   [VAL_GPU]: 0,
 };
 
+export const NEW_CUSTOM_SESSION_INITIAL_VALUES: CustomFormValues = {
+  [VAL_PROJECT]: '',
+  [VAL_TYPE]: NOTEBOOK,
+  [VAL_IMAGE]: '',
+  [VAL_REPO_USER_NAME]: '',
+  [VAL_REPO_SECRET]: '',
+  [VAL_REPO_HOST]: '',
+  [VAL_INSTANCE_NAME]: '',
+  [VAL_MEMORY]: 2,
+  [VAL_CORES]: 2,
+  [VAL_GPU]: 0,
+};
+
 // New Session props
-export const PROP_SESSION_TYPE = 'sessionType';
-export const PROP_SESSION_NAME = 'sessionName';
-export const PROP_SESSION_IMAGE = 'sessionImage';
-export const PROP_SESSION_RAM = 'sessionRam';
-export const PROP_SESSION_CORES = 'sessionCores';
+export const PROP_SESSION_PROJECT = 'project';
+export const PROP_SESSION_TYPE = 'type';
+export const PROP_SESSION_NAME = 'name';
+export const PROP_SESSION_IMAGE = 'image';
+export const PROP_SESSION_RAM = 'ram';
+export const PROP_SESSION_CORES = 'cores';
 
 // Stats props
 // Instance properties

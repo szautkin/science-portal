@@ -18,6 +18,7 @@ import {
   PROP_SESSION_CORES,
   PROP_SESSION_IMAGE,
   PROP_SESSION_NAME,
+  PROP_SESSION_PROJECT,
   PROP_SESSION_RAM,
   PROP_SESSION_TYPE,
   RENEW_SESSION,
@@ -102,6 +103,9 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
         await appFetch({
           [APP_FETCH_URL]: `${BASE_URL}${DELETE_SESSION_URL}/${sessionId}`,
           [APP_PART_TYPE]: DELETE_SESSION,
+          [APP_FETCH_OPTIONS]: {
+            method: 'DELETE',
+          },
         });
         await fetchRunningSessions();
       } catch (e) {
@@ -206,9 +210,10 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
   const fetchCreateSession = useCallback(
     async (sessionPayload: NewSession) => {
       const submitPayload: NewSession = {
-        sessionName: sessionPayload[PROP_SESSION_NAME],
-        sessionType: sessionPayload[PROP_SESSION_TYPE],
-        sessionImage: sessionPayload[PROP_SESSION_IMAGE],
+        [PROP_SESSION_PROJECT]: sessionPayload[PROP_SESSION_PROJECT],
+        [PROP_SESSION_NAME]: sessionPayload[PROP_SESSION_NAME],
+        [PROP_SESSION_TYPE]: sessionPayload[PROP_SESSION_TYPE],
+        [PROP_SESSION_IMAGE]: sessionPayload[PROP_SESSION_IMAGE],
       };
       if (sessionPayload[PROP_SESSION_TYPE] !== DESKTOP) {
         submitPayload[PROP_SESSION_CORES] = sessionPayload[PROP_SESSION_CORES];
@@ -220,10 +225,10 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
           [APP_FETCH_URL]: `${BASE_URL}${CREATE_SESSION_URL}`,
           [APP_FETCH_OPTIONS]: {
             method: 'POST',
-            body: JSON.stringify({
-              cookie: authState.cookie,
-              ...submitPayload,
-            }),
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams(submitPayload),
           },
           [APP_PART_TYPE]: CREATE_SESSION,
         });

@@ -86,6 +86,10 @@ import {
   PROP_MEMORY,
   PROP_VERSION,
   PROP_IMAGE_NAME,
+  VAL_REPO_USER_NAME,
+  VAL_REPO_SECRET,
+  VAL_REPO_HOST,
+  PROP_SESSION_PROJECT,
 } from './constants';
 import { DEFAULT_IMAGE_NAMES } from '../../components/utilities/constants';
 
@@ -114,6 +118,19 @@ export interface FormValues {
   [VAL_MEMORY]: number;
   [VAL_CORES]: number;
   [VAL_GPU]: number;
+}
+
+export interface CustomFormValues {
+  [VAL_PROJECT]: string;
+  [VAL_TYPE]: keyof DEFAULT_IMAGE_NAMES;
+  [VAL_IMAGE]: string;
+  [VAL_INSTANCE_NAME]: string;
+  [VAL_MEMORY]: number;
+  [VAL_CORES]: number;
+  [VAL_GPU]: number;
+  [VAL_REPO_USER_NAME]: string;
+  [VAL_REPO_SECRET]: string;
+  [VAL_REPO_HOST]: string;
 }
 
 export type ImageType =
@@ -211,6 +228,7 @@ export interface Repo {
 }
 
 export interface StandardSession {
+  [PROP_SESSION_PROJECT]: string;
   [PROP_SESSION_TYPE]: ImageType;
   [PROP_SESSION_NAME]: string;
   [PROP_SESSION_IMAGE]: string;

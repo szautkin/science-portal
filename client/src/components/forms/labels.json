@@ -5,6 +5,46 @@
     "container_image": "container image",
     "session_name": "session name",
     "memory": "memory",
-    "cores": "# cores"
+    "cores": "# cores",
+    "repositoryUsername": "repository username",
+    "repositorySecret": "repository secret"
+  },
+  "popover": {
+    "type": {
+      "headerText": "Session Type",
+      "bodyText": "Select from the list of supported session types"
+    },
+    "project": {
+      "headerText": "Project",
+      "bodyText": "The project within which an image created"
+    },
+    "container_image": {
+      "headerText": "Container Image",
+      "bodyText": "The Docker image for the session."
+    },
+    "session_name": {
+      "headerText": "Session Name",
+      "bodyText": "Name for the session. Alphanumeric and '-' characters only."
+    },
+    "memory": {
+      "headerText": "Memory",
+      "bodyText": "System memory (RAM) in gigabytes."
+    },
+    "cores": {
+      "headerText": "# of Cores",
+      "bodyText": "Number of cores used by the session."
+    },
+    "repositoryUsername": {
+      "headerText": "Image repository username",
+      "bodyText": "The username for authenticated access to the Image Repository."
+    },
+    "repositorySecret": {
+      "headerText": "Image repository secret",
+      "bodyText": "The secret for authenticated access to the Image Repository."
+    }
+  },
+  "button": {
+    "launch": "Launch",
+    "reset": "Reset"
   }
 }

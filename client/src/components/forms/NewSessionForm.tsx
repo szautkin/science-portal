@@ -1,4 +1,7 @@
+// Libs
 import React from 'react';
+
+// Components
 import { Form, Field } from 'react-final-form';
 import {
   Form as BootstrapForm,
@@ -7,21 +10,26 @@ import {
   Col,
   Placeholder,
 } from 'react-bootstrap';
+import FormPopover from '../common/Popover';
+import FieldPlaceholder from '../common/FieldPlaceholder';
 
+// Constants
 import {
   DATA_CONTEXT,
   DATA_IMAGES,
   DATA_SESSIONS,
   DESKTOP,
   NEW_SESSION_INITIAL_VALUES,
+  NOTEBOOK,
   OPTIONS,
-  PROP_AVAILABLE_CORES,
-  PROP_AVAILABLE_RAM,
   PROP_CORES,
+  PROP_DEFAULT_CORES,
+  PROP_DEFAULT_RAM,
   PROP_MEMORY,
   PROP_SESSION_CORES,
   PROP_SESSION_IMAGE,
   PROP_SESSION_NAME,
+  PROP_SESSION_PROJECT,
   PROP_SESSION_RAM,
   PROP_SESSION_TYPE,
   VAL_CORES,
@@ -31,28 +39,36 @@ import {
   VAL_PROJECT,
   VAL_TYPE,
 } from '../../context/data/constants';
+
+import {
+  DEFAULT_CORES_NUMBER,
+  DEFAULT_IMAGE_NAMES,
+  DEFAULT_RAM_NUMBER,
+  SKAHA_PROJECT,
+} from '../utilities/constants';
+
+// Hooks
+import { useData } from '../../context/data/useData';
+
+// Messages & labels
+import labels from './labels.json';
+
+// Types
+import {
+  FormKeys,
+  FormValues,
+  NewSession,
+  SortedImage,
+} from '../../context/data/types';
+
+// Utils
+import { getImagesNamesSorted, getProjectNames } from '../utilities/utils';
 import {
   getDefaultSessionName,
   getMissedFieldError,
   validateAlphanumericHyphen,
 } from '../../utilities/form';
-import FormPopover from '../common/Popover';
-import FieldPlaceholder from '../common/FieldPlaceholder';
-import {
-  FormKeys,
-  FormValues,
-  ImageEx,
-  NewSession,
-  SortedImage,
-} from '../../context/data/types';
-import { useData } from '../../context/data/useData';
-import labels from './labels.json';
-import {
-  getImagesNamesSorted,
-  getProjectImagesMap,
-  getProjectNames,
-} from '../utilities/utils';
-import { DEFAULT_IMAGE_NAMES, SKAHA_PROJECT } from '../utilities/constants';
+import FormField from './FromField';
 
 const NewSessionForm: React.FC = () => {
   //const { state, dispatch } = useAuth();
@@ -65,8 +81,44 @@ const NewSessionForm: React.FC = () => {
     state?.[DATA_SESSIONS] &&
     getDefaultSessionName(Object.keys(state[DATA_SESSIONS]).length + 1);
 
+  const [initialFormValues, setInitialFormValues] = React.useState(
+    NEW_SESSION_INITIAL_VALUES,
+  );
+
+  React.useEffect(() => {
+    if (state?.[DATA_CONTEXT]) {
+      const images = state[DATA_IMAGES];
+      const projectsOfType = images?.[NOTEBOOK];
+      const defaultImageName = DEFAULT_IMAGE_NAMES[NOTEBOOK];
+      const defaultImages = projectsOfType?.[SKAHA_PROJECT] || [];
+      const imagesOfProject = getImagesNamesSorted(defaultImages);
+      const defaultImageId = defaultImageName
+        ? imagesOfProject.find((mObj) => mObj.name === defaultImageName)?.id
+        : imagesOfProject[0]?.id;
+
+      const newFormValues = {
+        ...initialFormValues,
+        [VAL_TYPE]: NOTEBOOK,
+        [VAL_IMAGE]: defaultImageId,
+        [VAL_PROJECT]: SKAHA_PROJECT,
+        [VAL_INSTANCE_NAME]: createSessionName(NOTEBOOK),
+        [VAL_CORES]: Math.max(
+          state?.[DATA_CONTEXT]?.[PROP_CORES]?.[PROP_DEFAULT_CORES] ?? 0,
+          DEFAULT_CORES_NUMBER,
+        ),
+        [VAL_MEMORY]: Math.max(
+          state?.[DATA_CONTEXT]?.[PROP_MEMORY]?.[PROP_DEFAULT_RAM] ?? 0,
+          DEFAULT_RAM_NUMBER,
+        ),
+      };
+
+      setInitialFormValues(newFormValues);
+    }
+  }, [state]);
+
   const onSubmit = async (values: FormValues) => {
     const sessionPayload: NewSession = {
+      [PROP_SESSION_PROJECT]: values[VAL_PROJECT],
       [PROP_SESSION_TYPE]: values[VAL_TYPE],
       [PROP_SESSION_NAME]: values[VAL_INSTANCE_NAME],
       [PROP_SESSION_IMAGE]: values[VAL_IMAGE],
@@ -108,17 +160,6 @@ const NewSessionForm: React.FC = () => {
         values[VAL_INSTANCE_NAME],
       );
     }
-
-    if (!values.project) {
-      errors.project = 'Project is required';
-    }
-    if (!values.type) {
-      errors.type = 'Type is required';
-    }
-    // validate name
-    errors[VAL_INSTANCE_NAME] = validateAlphanumericHyphen(
-      values[VAL_INSTANCE_NAME],
-    );
     return errors;
   };
 
@@ -126,267 +167,211 @@ const NewSessionForm: React.FC = () => {
     <Form
       onSubmit={onSubmit}
       validate={validate}
-      initialValues={NEW_SESSION_INITIAL_VALUES}
+      initialValues={initialFormValues}
       render={({ handleSubmit, form, submitting, pristine, values }) => {
         const images = state[DATA_IMAGES];
         const projectsOfType = images?.[values[VAL_TYPE]];
         const availableProjects = getProjectNames(projectsOfType) || [];
-        const defaultImages = projectsOfType?.[SKAHA_PROJECT] || [];
-        const imagesOfProject = getImagesNamesSorted(
-          projectsOfType ? projectsOfType[values[VAL_PROJECT]] : defaultImages,
-        );
-        const defaultImageName =
-          DEFAULT_IMAGE_NAMES[values?.[VAL_TYPE]] || undefined;
-        const defaultImageId = defaultImageName
-          ? imagesOfProject.find((mObj) => mObj.name === defaultImageName)?.id
-          : imagesOfProject[0]?.id;
-        console.log('form values', values);
-        console.log('form imagesOfProject', imagesOfProject);
-        console.log('form defaultImageName', defaultImageName);
-        console.log('form defaultImageId', defaultImageId);
+        const defaultImages = projectsOfType?.[values[VAL_PROJECT]] || [];
+        const imagesOfProject = getImagesNamesSorted(defaultImages);
+
         return (
           <BootstrapForm onSubmit={handleSubmit}>
-            <Field name={VAL_TYPE}>
-              {({ input, meta }) => (
-                <BootstrapForm.Group as={Row} className="mb-3">
-                  <BootstrapForm.Label
-                    column="sm"
-                    sm="4"
-                    className="text-end fw-bold"
-                  >
-                    {labels.form.type}
-                    <FormPopover
-                      headerText={'Session Type'}
-                      bodyText={
-                        'Select from the list of supported session types'
-                      }
-                    />
-                  </BootstrapForm.Label>
-                  <Col sm={7}>
-                    {hasImages ? (
-                      <BootstrapForm.Select
-                        {...input}
-                        isInvalid={meta.touched && meta.error}
-                      >
-                        <option value="">Select a type</option>
-                        {availableTypes.map((pType) => (
-                          <option key={pType} value={pType}>
-                            {pType}
-                          </option>
-                        ))}
-                      </BootstrapForm.Select>
-                    ) : (
-                      <FieldPlaceholder />
-                    )}
-                  </Col>
-                  <BootstrapForm.Control.Feedback type="invalid">
-                    {meta.error}
-                  </BootstrapForm.Control.Feedback>
-                </BootstrapForm.Group>
-              )}
-            </Field>
-            <Field name={VAL_PROJECT}>
-              {({ input, meta }) => (
-                <BootstrapForm.Group as={Row} className="mb-3">
-                  <BootstrapForm.Label
-                    column="sm"
-                    sm="4"
-                    className="text-end fw-bold"
-                  >
-                    {labels.form.project}
-                    <FormPopover
-                      headerText={'Project'}
-                      bodyText={'The project within which an image created'}
-                    />
-                  </BootstrapForm.Label>
-                  <Col sm={7}>
-                    {hasImages ? (
-                      <BootstrapForm.Select
-                        {...input}
-                        isInvalid={meta.touched && meta.error}
-                      >
-                        <option value="">Select a project</option>
-                        {availableProjects.map((prj) => (
-                          <option key={prj} value={prj}>
-                            {prj}
-                          </option>
-                        ))}
-                      </BootstrapForm.Select>
-                    ) : (
-                      <FieldPlaceholder />
-                    )}
-                  </Col>
-                  <BootstrapForm.Control.Feedback type="invalid">
-                    {meta.error}
-                  </BootstrapForm.Control.Feedback>
-                </BootstrapForm.Group>
-              )}
-            </Field>
-            <Field name={VAL_IMAGE}>
-              {({ input, meta }) => (
-                <BootstrapForm.Group as={Row} className="mb-3">
-                  <BootstrapForm.Label
-                    column="sm"
-                    sm="4"
-                    className="text-end fw-bold"
-                  >
-                    {labels.form.container_image}
-                    <FormPopover
-                      headerText={'Container Image'}
-                      bodyText={'The Docker image for the session.'}
-                    />
-                  </BootstrapForm.Label>
-                  <Col sm={7}>
-                    {hasImages ? (
-                      <BootstrapForm.Select
-                        {...input}
-                        value={input.value || defaultImageId}
-                        isInvalid={meta.touched && meta.error}
-                      >
-                        <option value="">Select an image</option>
-                        {imagesOfProject.map((image: SortedImage) => (
-                          <option key={image.id} value={image.id}>
-                            {image.name}
-                          </option>
-                        ))}
-                      </BootstrapForm.Select>
-                    ) : (
-                      <FieldPlaceholder />
-                    )}
-                  </Col>
-                  <BootstrapForm.Control.Feedback type="invalid">
-                    {meta.error}
-                  </BootstrapForm.Control.Feedback>
-                </BootstrapForm.Group>
-              )}
-            </Field>
-            <Field
-              name={VAL_INSTANCE_NAME}
-              initialValue={
-                values?.[VAL_TYPE] ? createSessionName(values?.[VAL_TYPE]) : ''
-              }
+            <FormField
+              name={VAL_TYPE}
+              label={labels.form.type}
+              popover={{
+                headerText: labels.popover.type.headerText,
+                bodyText: labels.popover.type.bodyText,
+              }}
             >
-              {({ input, meta }) => (
-                <BootstrapForm.Group as={Row} className="mb-3">
-                  <BootstrapForm.Label
-                    column="sm"
-                    sm="4"
-                    className="text-end fw-bold"
+              {({ input, meta }) =>
+                hasImages ? (
+                  <BootstrapForm.Select
+                    {...input}
+                    onChange={(v) => {
+                      input.onChange(v);
+                      const imgType = v.target.value;
+
+                      const projectsOfType = images?.[imgType];
+                      const defaultImages =
+                        projectsOfType?.[SKAHA_PROJECT] || [];
+                      const imagesOfProject =
+                        getImagesNamesSorted(defaultImages);
+                      const defaultImageName = DEFAULT_IMAGE_NAMES[imgType];
+
+                      const defaultImageId = defaultImageName
+                        ? imagesOfProject.find(
+                            (mObj) => mObj.name === defaultImageName,
+                          )?.id
+                        : imagesOfProject[0]?.id;
+
+                      form.batch(() => {
+                        form.change(
+                          VAL_INSTANCE_NAME,
+                          createSessionName(imgType),
+                        );
+                        form.change(VAL_PROJECT, SKAHA_PROJECT);
+                        form.change(VAL_IMAGE, defaultImageId);
+                      });
+                    }}
+                    isInvalid={meta.touched && meta.error}
                   >
-                    {labels.form.session_name}
-                    <FormPopover
-                      headerText={'Session Name'}
-                      bodyText={
-                        "Name for the session. Alphanumeric and '-' characters only."
-                      }
-                    />
-                  </BootstrapForm.Label>
-                  <Col sm={7}>
-                    {hasImages ? (
-                      <BootstrapForm.Control
+                    <option value="">Select a type</option>
+                    {availableTypes?.map((pType) => (
+                      <option key={pType} value={pType}>
+                        {pType}
+                      </option>
+                    ))}
+                  </BootstrapForm.Select>
+                ) : (
+                  <FieldPlaceholder />
+                )
+              }
+            </FormField>
+
+            <FormField
+              name={VAL_PROJECT}
+              label={labels.form.project}
+              popover={{
+                headerText: labels.popover.project.headerText,
+                bodyText: labels.popover.project.bodyText,
+              }}
+            >
+              {({ input, meta }) =>
+                hasImages ? (
+                  <BootstrapForm.Select
+                    {...input}
+                    isInvalid={meta.touched && meta.error}
+                  >
+                    <option value="">Select a project</option>
+                    {availableProjects.map((prj) => (
+                      <option key={prj} value={prj}>
+                        {prj}
+                      </option>
+                    ))}
+                  </BootstrapForm.Select>
+                ) : (
+                  <FieldPlaceholder />
+                )
+              }
+            </FormField>
+
+            <FormField
+              name={VAL_IMAGE}
+              label={labels.form.container_image}
+              popover={{
+                headerText: labels.popover.container_image.headerText,
+                bodyText: labels.popover.container_image.bodyText,
+              }}
+            >
+              {({ input, meta }) =>
+                hasImages ? (
+                  <BootstrapForm.Select
+                    {...input}
+                    isInvalid={meta.touched && meta.error}
+                  >
+                    <option value="">Select an image</option>
+                    {imagesOfProject.map((image: SortedImage) => (
+                      <option key={image.id} value={image.id}>
+                        {image.name}
+                      </option>
+                    ))}
+                  </BootstrapForm.Select>
+                ) : (
+                  <FieldPlaceholder />
+                )
+              }
+            </FormField>
+
+            <FormField
+              name={VAL_INSTANCE_NAME}
+              label={labels.form.session_name}
+              popover={{
+                headerText: labels.popover.session_name.headerText,
+                bodyText: labels.popover.session_name.bodyText,
+              }}
+            >
+              {({ input, meta }) =>
+                hasImages ? (
+                  <BootstrapForm.Control
+                    {...input}
+                    type="text"
+                    placeholder="Instance name"
+                    isInvalid={meta.touched && meta.error}
+                  />
+                ) : (
+                  <FieldPlaceholder />
+                )
+              }
+            </FormField>
+
+            {values?.[VAL_TYPE] !== DESKTOP && (
+              <>
+                <FormField
+                  name={VAL_MEMORY}
+                  label={labels.form.memory}
+                  popover={{
+                    headerText: labels.popover.memory.headerText,
+                    bodyText: labels.popover.memory.bodyText,
+                  }}
+                >
+                  {({ input, meta }) =>
+                    hasImages ? (
+                      <BootstrapForm.Select
                         {...input}
-                        type="text"
-                        placeholder="Instance name"
                         isInvalid={meta.touched && meta.error}
-                      />
+                      >
+                        <option value="">Select instance RAM</option>
+                        {state?.[DATA_CONTEXT]?.[PROP_MEMORY]?.[OPTIONS]?.map(
+                          (mem) => (
+                            <option key={mem} value={mem}>
+                              {mem}
+                            </option>
+                          ),
+                        )}
+                      </BootstrapForm.Select>
                     ) : (
                       <FieldPlaceholder />
-                    )}
-                  </Col>
-                  <BootstrapForm.Control.Feedback type="invalid">
-                    {meta.error}
-                  </BootstrapForm.Control.Feedback>
-                </BootstrapForm.Group>
-              )}
-            </Field>
-            {values?.[VAL_TYPE] !== DESKTOP && (
-              <Field name={VAL_MEMORY}>
-                {({ input, meta }) => (
-                  <BootstrapForm.Group as={Row} className="mb-3">
-                    <BootstrapForm.Label
-                      column="sm"
-                      sm="4"
-                      className="text-end fw-bold"
-                    >
-                      {labels.form.memory}
-                      <FormPopover
-                        headerText={'Memory'}
-                        bodyText={'System memory (RAM) in gigabytes.'}
-                      />
-                    </BootstrapForm.Label>
-                    <Col sm={7}>
-                      {hasImages ? (
-                        <BootstrapForm.Select
-                          {...input}
-                          isInvalid={meta.touched && meta.error}
-                        >
-                          <option value="">Select instance RAM</option>
-                          {state?.[DATA_CONTEXT]?.[PROP_MEMORY]?.[OPTIONS]?.map(
-                            (mem) => (
-                              <option key={mem} value={mem}>
-                                {mem}
-                              </option>
-                            ),
-                          )}
-                        </BootstrapForm.Select>
-                      ) : (
-                        <FieldPlaceholder />
-                      )}
-                    </Col>
-                    <BootstrapForm.Control.Feedback type="invalid">
-                      {meta.error}
-                    </BootstrapForm.Control.Feedback>
-                  </BootstrapForm.Group>
-                )}
-              </Field>
+                    )
+                  }
+                </FormField>
+
+                <FormField
+                  name={VAL_CORES}
+                  label={labels.form.cores}
+                  popover={{
+                    headerText: labels.popover.cores.headerText,
+                    bodyText: labels.popover.cores.bodyText,
+                  }}
+                >
+                  {({ input, meta }) =>
+                    hasImages ? (
+                      <BootstrapForm.Select
+                        {...input}
+                        isInvalid={meta.touched && meta.error}
+                      >
+                        <option value="">
+                          Select instance number of cores
+                        </option>
+                        {state?.[DATA_CONTEXT]?.[PROP_CORES]?.[OPTIONS]?.map(
+                          (core) => (
+                            <option key={core} value={core}>
+                              {core}
+                            </option>
+                          ),
+                        )}
+                      </BootstrapForm.Select>
+                    ) : (
+                      <FieldPlaceholder />
+                    )
+                  }
+                </FormField>
+              </>
             )}
-            {values?.[VAL_TYPE] !== DESKTOP && (
-              <Field name={VAL_CORES}>
-                {({ input, meta }) => (
-                  <BootstrapForm.Group as={Row} className="mb-3">
-                    <BootstrapForm.Label
-                      column="sm"
-                      sm="4"
-                      className="text-end fw-bold"
-                    >
-                      {labels.form.cores}
-                      <FormPopover
-                        headerText={'# of Cores'}
-                        bodyText={
-                          'Number of cores used by the session. Default: 2'
-                        }
-                      />
-                    </BootstrapForm.Label>
-                    <Col sm={7}>
-                      {hasImages ? (
-                        <BootstrapForm.Select
-                          {...input}
-                          isInvalid={meta.touched && meta.error}
-                        >
-                          <option value="">
-                            Select instance number of cores
-                          </option>
-                          {state?.[DATA_CONTEXT]?.[PROP_CORES]?.[OPTIONS]?.map(
-                            (core) => (
-                              <option key={core} value={core}>
-                                {core}
-                              </option>
-                            ),
-                          )}
-                        </BootstrapForm.Select>
-                      ) : (
-                        <FieldPlaceholder />
-                      )}
-                    </Col>
-                    <BootstrapForm.Control.Feedback type="invalid">
-                      {meta.error}
-                    </BootstrapForm.Control.Feedback>
-                  </BootstrapForm.Group>
-                )}
-              </Field>
-            )}
+
             <Row className="mt-3">
-              <Col sm={4}> </Col>
+              <Col sm={4} />
               <Col sm={7}>
                 {hasImages ? (
                   <Button
@@ -396,11 +381,10 @@ const NewSessionForm: React.FC = () => {
                     size="sm"
                     className="m-1"
                   >
-                    Launch
+                    {labels.button.launch}
                   </Button>
                 ) : (
                   <Placeholder.Button
-                    className="sp-button-placeholder"
                     bg="primary"
                     aria-hidden="true"
                     animation="glow"
@@ -416,11 +400,10 @@ const NewSessionForm: React.FC = () => {
                     size="sm"
                     className="m-1"
                   >
-                    Reset
+                    {labels.button.reset}
                   </Button>
                 ) : (
                   <Placeholder.Button
-                    className="sp-button-placeholder"
                     bg="secondary"
                     aria-hidden="true"
                     animation="glow"
