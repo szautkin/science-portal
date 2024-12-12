@@ -119,10 +119,13 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
     async (sessionId: string) => {
       try {
         const renewSession = await appFetch({
-          [APP_FETCH_URL]: `${BASE_URL}${RENEW_SESSION_URL}`,
+          [APP_FETCH_URL]: `${BASE_URL}${RENEW_SESSION_URL}/${sessionId}`,
           [APP_FETCH_OPTIONS]: {
-            method: 'GET',
-            body: JSON.stringify({ cookie: authState.cookie, sessionId }),
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({ action: 'renew' }),
           },
           [APP_PART_TYPE]: RENEW_SESSION,
         });

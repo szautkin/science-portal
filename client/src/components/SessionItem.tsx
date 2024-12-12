@@ -15,7 +15,7 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 import Spinner from 'react-bootstrap/Spinner';
 import { Session } from '../context/data/types';
-import { SCIENCE_PORTAL_URL, SESSION_URL } from '../context/data/constants';
+import { BASE_URL, SESSION_URL } from '../context/data/constants';
 import { useApp } from '../context/app/useApp';
 import { useData } from '../context/data/useData';
 import { APP_LOADING, FETCHING_SESSION } from '../context/app/constants';
@@ -33,7 +33,7 @@ let connectCSS = 'sp-e-session-connect';
 let alwaysAvailableCSS = 'sp-card-text sp-session-button';
 let hiddenPendingCSS = 'sp-card-text sp-session-button';
 let displayGPU = true;
-type TimeoutHandler = ReturnType<typeof setTimeout>
+type TimeoutHandler = ReturnType<typeof setTimeout>;
 const SessionItem = (props: Props) => {
   const { fetchSessionStatus, fetchRenewSession } = useData();
   const { state, requestDeleteSessionConfirmation } = useApp();
@@ -262,7 +262,7 @@ const SessionItem = (props: Props) => {
 
               <span className="sp-card-button-span">
                 <a
-                  href={`${SCIENCE_PORTAL_URL}${SESSION_URL}/${props.session.id}?view=events`}
+                  href={`${BASE_URL}${SESSION_URL}/${props.session.id}?view=events`}
                   target="_blank"
                   rel="noreferrer"
                 >
@@ -285,7 +285,7 @@ const SessionItem = (props: Props) => {
 
               <span className="sp-card-button-span">
                 <a
-                  href={`${SCIENCE_PORTAL_URL}${SESSION_URL}/${props.session.id}?view=logs`}
+                  href={`${BASE_URL}${SESSION_URL}/${props.session.id}?view=logs`}
                   target="_blank"
                   rel="noreferrer"
                 >
