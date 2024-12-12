@@ -1,6 +1,6 @@
 import React from 'react';
 import { Field, FieldRenderProps } from 'react-final-form';
-import { Form as BootstrapForm, Row, Col } from 'react-bootstrap';
+import { Form as BootstrapForm, Row, Col, FormProps } from 'react-bootstrap';
 import FormPopover from '../common/Popover';
 
 interface PopoverContent {
@@ -8,12 +8,15 @@ interface PopoverContent {
   bodyText: string;
 }
 
-interface FormFieldProps<FieldValue = any> {
+interface PlainFormProps<FieldValue = any> {
   name: string;
-  label: string;
   children: (
     props: FieldRenderProps<FieldValue, HTMLElement>,
   ) => React.ReactNode;
+}
+
+interface FormFieldProps<FieldValue> extends PlainFormProps<FieldValue> {
+  label: string;
   popover: PopoverContent;
 }
 
@@ -25,7 +28,6 @@ const FormField = <FieldValue,>({
 }: FormFieldProps<FieldValue>) => (
   <Field name={name}>
     {(fieldProps) => {
-      console.log('fieldProps.meta.error', fieldProps.meta.error);
       return (
         <BootstrapForm.Group as={Row} className="mb-3">
           <BootstrapForm.Label column="sm" sm="4" className="text-end fw-bold">
@@ -42,6 +44,24 @@ const FormField = <FieldValue,>({
             </BootstrapForm.Control.Feedback>
           </Col>
         </BootstrapForm.Group>
+      );
+    }}
+  </Field>
+);
+
+export const PlainFormField = <FieldValue,>({
+  name,
+  children,
+}: PlainFormProps<FieldValue>) => (
+  <Field name={name}>
+    {(fieldProps) => {
+      return (
+        <>
+          {children(fieldProps)}
+          <BootstrapForm.Control.Feedback type="invalid">
+            {fieldProps.meta.error}
+          </BootstrapForm.Control.Feedback>
+        </>
       );
     }}
   </Field>

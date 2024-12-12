@@ -109,8 +109,8 @@ export const OPTIONS = 'options';
 export const VAL_PROJECT = 'project';
 export const VAL_TYPE = 'type';
 export const VAL_IMAGE = 'image';
-export const VAL_REPO_USER_NAME = 'repositoryUsername';
-export const VAL_REPO_SECRET = 'repositorySecret';
+export const VAL_REPO_USER_NAME = 'repositoryAuthUsername';
+export const VAL_REPO_SECRET = 'repositoryAuthSecret';
 export const VAL_REPO_HOST = 'repositoryHost';
 export const VAL_INSTANCE_NAME = 'instanceName';
 export const VAL_MEMORY = 'memory';
@@ -128,7 +128,6 @@ export const NEW_SESSION_INITIAL_VALUES: FormValues = {
 };
 
 export const NEW_CUSTOM_SESSION_INITIAL_VALUES: CustomFormValues = {
-  [VAL_PROJECT]: '',
   [VAL_TYPE]: NOTEBOOK,
   [VAL_IMAGE]: '',
   [VAL_REPO_USER_NAME]: '',
@@ -147,6 +146,8 @@ export const PROP_SESSION_NAME = 'name';
 export const PROP_SESSION_IMAGE = 'image';
 export const PROP_SESSION_RAM = 'ram';
 export const PROP_SESSION_CORES = 'cores';
+export const PROP_REPO_USER_NAME = 'repositoryAuthUsername';
+export const PROP_REPO_SECRET = 'repositoryAuthSecret';
 
 // Stats props
 // Instance properties

@@ -15,6 +15,8 @@ import {
   FETCHING_SESSION,
   IMAGE_URL,
   PLATFORM_CONTEXT,
+  PROP_REPO_SECRET,
+  PROP_REPO_USER_NAME,
   PROP_SESSION_CORES,
   PROP_SESSION_IMAGE,
   PROP_SESSION_NAME,
@@ -51,7 +53,14 @@ import {
   getTransformedSessions,
   transformSession,
 } from '../../utilities/sessions';
-import { Context, Image, NewSession, Session, StatsData } from './types';
+import {
+  Context,
+  Image,
+  NewCustomSession,
+  NewSession,
+  Session,
+  StatsData,
+} from './types';
 import { getImagesByType } from '../../utilities/images';
 
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -244,6 +253,43 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
     },
     [appFetch, authState, fetchRunningSessions],
   );
+  const fetchCreateCustomSession = useCallback(
+    async (sessionPayload: NewCustomSession) => {
+      const submitPayload: NewCustomSession = {
+        [PROP_SESSION_NAME]: sessionPayload[PROP_SESSION_NAME],
+        [PROP_SESSION_TYPE]: sessionPayload[PROP_SESSION_TYPE],
+        [PROP_SESSION_IMAGE]: sessionPayload[PROP_SESSION_IMAGE],
+        [PROP_REPO_USER_NAME]: sessionPayload[PROP_REPO_USER_NAME],
+      };
+      if (sessionPayload[PROP_SESSION_TYPE] !== DESKTOP) {
+        submitPayload[PROP_SESSION_CORES] = sessionPayload[PROP_SESSION_CORES];
+        submitPayload[PROP_SESSION_RAM] = sessionPayload[PROP_SESSION_RAM];
+      }
+
+      try {
+        const sessionData = await appFetch({
+          [APP_FETCH_URL]: `${BASE_URL}${CREATE_SESSION_URL}`,
+          [APP_FETCH_OPTIONS]: {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+              'X-Repository-Secret': sessionPayload[PROP_REPO_SECRET],
+              'X-Repository-username': sessionPayload[PROP_REPO_USER_NAME],
+            },
+            body: new URLSearchParams(submitPayload),
+          },
+          [APP_PART_TYPE]: CREATE_SESSION,
+        });
+        console.log('is res', sessionData);
+        if (sessionData) {
+          await fetchRunningSessions();
+        }
+      } catch (e) {
+        console.error('Fetch create session failed:', e);
+      }
+    },
+    [appFetch, authState, fetchRunningSessions],
+  );
 
   const clearData = useCallback(async () => {
     dispatch({
@@ -257,6 +303,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
         state,
         fetchRunningSessions,
         fetchCreateSession,
+        fetchCreateCustomSession,
         fetchDeleteSession,
         fetchRenewSession,
         fetchSessionStatus,

@@ -2,13 +2,16 @@
 import { createContext } from 'react';
 
 // Types
-import { DataState, NewSession } from './types';
+import { DataState, NewCustomSession, NewSession } from './types';
 
 export const DataContext = createContext<
   | {
       state: DataState;
       fetchRunningSessions: () => void;
       fetchCreateSession: (sessionPayload: NewSession) => void;
+      fetchCreateCustomSession: (
+        customSessionPayload: NewCustomSession,
+      ) => void;
       fetchDeleteSession: (sessionId: string) => void;
       fetchRenewSession: (sessionId: string) => void;
       fetchSessionStatus: (sessionId: string) => void;

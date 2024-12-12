@@ -90,6 +90,8 @@ import {
   VAL_REPO_SECRET,
   VAL_REPO_HOST,
   PROP_SESSION_PROJECT,
+  PROP_REPO_USER_NAME,
+  PROP_REPO_SECRET,
 } from './constants';
 import { DEFAULT_IMAGE_NAMES } from '../../components/utilities/constants';
 
@@ -121,7 +123,6 @@ export interface FormValues {
 }
 
 export interface CustomFormValues {
-  [VAL_PROJECT]: string;
   [VAL_TYPE]: keyof DEFAULT_IMAGE_NAMES;
   [VAL_IMAGE]: string;
   [VAL_INSTANCE_NAME]: string;
@@ -228,15 +229,20 @@ export interface Repo {
 }
 
 export interface StandardSession {
-  [PROP_SESSION_PROJECT]: string;
   [PROP_SESSION_TYPE]: ImageType;
   [PROP_SESSION_NAME]: string;
   [PROP_SESSION_IMAGE]: string;
+  [PROP_SESSION_RAM]?: number;
+  [PROP_SESSION_CORES]?: number;
 }
 
 export interface NewSession extends StandardSession {
-  [PROP_SESSION_RAM]?: number;
-  [PROP_SESSION_CORES]?: number;
+  [PROP_SESSION_PROJECT]: string;
+}
+
+export interface NewCustomSession extends StandardSession {
+  [PROP_REPO_USER_NAME]?: string;
+  [PROP_REPO_SECRET]?: string;
 }
 
 export interface StatsData {

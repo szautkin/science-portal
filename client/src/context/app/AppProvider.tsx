@@ -76,18 +76,35 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
         payload[APP_FETCH_URL],
         payload[APP_FETCH_OPTIONS],
       );
-      if (response.ok && response.status >= 200 && response.status < 400) {
+      if (response.ok) {
         try {
-          const data = await response.json();
-          return {
-            [APP_FETCH_RESULT]: data,
-          };
-        } catch {
+          const contentType = response.headers.get('Content-Type');
+
+          if (contentType && contentType.includes('application/json')) {
+            const data = await response.json();
+            return {
+              [APP_FETCH_RESULT]: data,
+            };
+          } else if (contentType && contentType.includes('text/')) {
+            const data = await response.text();
+            return {
+              [APP_FETCH_RESULT]: data,
+            };
+          } else {
+            dispatch({
+              type: FETCH_FAILED,
+              payload: {
+                [APP_ACTION_TYPE]: payload[APP_PART_TYPE],
+                [APP_ACTION_MESSAGE]: `Unsupported content type: ${contentType || 'unknown'}`,
+              },
+            });
+          }
+        } catch (error) {
           dispatch({
             type: FETCH_FAILED,
             payload: {
               [APP_ACTION_TYPE]: payload[APP_PART_TYPE],
-              [APP_ACTION_MESSAGE]: `JSON parse error`,
+              [APP_ACTION_MESSAGE]: `Error processing response: ${error.message || 'unknown error'}`,
             },
           });
         }

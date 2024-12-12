@@ -2,7 +2,7 @@
 import React from 'react';
 
 // Components
-import { Form, Field } from 'react-final-form';
+import { Form } from 'react-final-form';
 import {
   Form as BootstrapForm,
   Button,
@@ -10,7 +10,6 @@ import {
   Col,
   Placeholder,
 } from 'react-bootstrap';
-import FormPopover from '../common/Popover';
 import FieldPlaceholder from '../common/FieldPlaceholder';
 
 // Constants
